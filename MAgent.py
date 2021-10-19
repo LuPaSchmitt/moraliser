@@ -6,6 +6,7 @@ Created on Thu Oct 14 17:55:03 2021
 """
 
 import numpy as np
+import scipy.special
 
 names = ["Otto","Rüdiger","Hans","Gustav","Alfred","Norbert","Peter","Thomas","Egon","Heinrich"]
 
@@ -15,6 +16,8 @@ class Agent:
         
         # get a random name (needs to be improved)
         self.name = np.random.choice(names)
+        #maps between (0,1)
+        self.activation_function = lambda x: scipy.special.expit(x)
         
         # structure of the nn
         self.input = 1
