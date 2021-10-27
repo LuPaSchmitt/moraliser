@@ -15,9 +15,6 @@ np.random.seed(0)
 N = 30
 agents = [Agent() for _ in range(N)]
 
-# create agents
-for i in range(N):
-    agents.append(Agent())
 
 rounds = 10
 gens = 1000
@@ -31,17 +28,18 @@ for i in range(gens):
 
     for n in range(rounds):
 
-        for a in agents:
-            our_action = a.action()
-            their_action = strategies.default(a.opponent_prev_action, a.prev_action)
-            a.opponent_prev_action = their_action
-            a.prev_action = our_action
-            a.score += SCORE_MAP[our_action][their_action]
+        for j, me in enumerate(agents):
+            opponent = agents[(j + 1) % N]
+            my_action = me.action(opponent.id)
+            their_action = opponent.action(me.id)
+            me.opponent_prev_action_map[opponent.id] = their_action
+            opponent.opponent_prev_action_map[me.id] = my_action
+
+            me.score += SCORE_MAP[my_action][their_action]
+            opponent.score += SCORE_MAP[their_action][my_action]
 
     # after the run
-    score = []
-    for a in agents:
-        score.append(a.score)
+    score = [a.score for a in agents]
 
     avg = sum(score) / len(score)
     mscore = max(score)
@@ -56,4 +54,4 @@ for i in range(gens):
 
 plt.plot(lin, Info_avg)
 plt.plot(lin, Info_max)
-plt.savefig('test.png')
+plt.savefig('ring.png')

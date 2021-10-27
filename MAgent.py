@@ -8,19 +8,17 @@ Created on Thu Oct 14 17:55:03 2021
 import numpy as np
 import scipy.special
 
-names = ["Otto", "Rüdiger", "Hans", "Gustav", "Alfred", "Norbert", "Peter", "Thomas", "Egon", "Heinrich"]
-
 
 class Agent:
 
+    id_counter = 0
     def __init__(self):
-
         # get a random name (needs to be improved)
-        self.name = np.random.choice(names)
+        self.id = Agent.id_counter
+        Agent.id_counter += 1
         # maps between (0,1)
         self.activation_function = lambda x: scipy.special.expit(x)
-        self.prev_action = 0
-        self.opponent_prev_action = 0
+        self.opponent_prev_action_map = {}  # id -> last action
 
         # structure of the nn
         self.input = 1
@@ -57,13 +55,13 @@ class Agent:
         # threshold of mutation
         thr = 0.3
 
-        if (np.random.rand() > thr):
+        if np.random.rand() > thr:
             self.wih1 += np.random.normal(0.0, pow(self.input, -0.5) * factor, (self.hidden1, self.input))
 
-        if (np.random.rand() > thr):
+        if np.random.rand() > thr:
             self.wh1h2 += np.random.normal(0.0, pow(self.hidden1, -0.5) * factor, (self.hidden2, self.hidden1))
 
-        if (np.random.rand() > thr):
+        if np.random.rand() > thr:
             self.wh2o += np.random.normal(0.0, pow(self.hidden2, -0.5) * factor, (self.output, self.hidden2))
 
     # calculate output given input
@@ -85,7 +83,8 @@ class Agent:
     def get_data(self):
         return (self.name, self.wih1, self.wh1h2, self.wh2o)
 
-    def action(self):
-        res = self.calc(self.opponent_prev_action)
+    def action(self, id):
+        opponent_prev_action = self.opponent_prev_action_map.get(id, 0)
+        res = self.calc(opponent_prev_action)
         # introduce randomness
         return 0 if np.random.random() < np.max(res) else 1
