@@ -13,7 +13,7 @@ class Agent:
 
     id_counter = 0
     def __init__(self):
-        # get a random name (needs to be improved)
+        
         self.id = Agent.id_counter
         Agent.id_counter += 1
         # maps between (0,1)
@@ -39,9 +39,8 @@ class Agent:
         self.wh1h2 = np.random.normal(0.0, pow(self.hidden1, -0.5), (self.hidden2, self.hidden1))
         self.wh2o = np.random.normal(0.0, pow(self.hidden2, -0.5), (self.output, self.hidden2))
 
-    def update(self, name, gen1, gen2, gen3):
-
-        self.name = name
+    def update(self, ID, gen1, gen2, gen3):
+        self.id = ID
         self.wih1 = gen1
         self.wh1h2 = gen2
         self.wh2o = gen3
@@ -49,11 +48,11 @@ class Agent:
     # just a prototype - probably has to be adjusted (not just the numbers and threshold)
     def mutate(self):
 
-        self.mut += 1
+        
         # strength of the mutation
-        factor = 0.5
+        factor = 0.1
         # threshold of mutation
-        thr = 0.3
+        thr = 0.9
 
         if np.random.rand() > thr:
             self.wih1 += np.random.normal(0.0, pow(self.input, -0.5) * factor, (self.hidden1, self.input))

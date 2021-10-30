@@ -17,10 +17,11 @@ agents = [Agent() for _ in range(N)]
 
 
 rounds = 10
-gens = 1000
+gens = 10000
 lin = np.arange(1, gens + 1, 1)
 Info_avg = []
 Info_max = []
+Info_min = []
 
 for i in range(gens):
     for a in agents:
@@ -40,18 +41,43 @@ for i in range(gens):
 
     # after the run
     score = [a.score for a in agents]
-
-    avg = sum(score) / len(score)
-    mscore = max(score)
+    sum_score = sum(score)
+    avg = sum_score / len(score)
+    max_score = max(score)
+    min_score = min(score)
     # print("Maximum Score: "+ str(mscore)+" Average Score "+ str(np.round(avg,2)))
     Info_avg.append(avg)
-    Info_max.append(mscore)
+    Info_max.append(max_score)
+    Info_min.append(min_score)
 
-    # for simplicity
-    for a in agents:
-        if (a.score < avg):
-            a.mutate()
+    # Genetic Algorithm
+    children = [Agent() for _ in range(N)]
+    
+    for i in range(N):
+        S = 0
+        pick = random.randrange(0,sum_score)
+        
+        for a in agents:
+            S += a.score
+            
+            if S > pick :
+                #create child (from one parent)
+                gen1 = a.wih1  
+                gen2 = a.wh1h2
+                gen3 =  a.wh2o
+                children[i].update(i, gen1, gen2, gen3)
+                children[i].mutate()
+                break
+            
+    #replace old generation with children
+    for i in range(N):
+        agents[i] = children[i]
+        
+            
+            
+        
 
 plt.plot(lin, Info_avg)
 plt.plot(lin, Info_max)
+plt.plot(lin, Info_min)
 plt.savefig('ring.png')
