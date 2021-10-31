@@ -31,8 +31,8 @@ class Agent:
         # Score
         self.score = 0
 
-        # Number of Mutation
-        self.mut = 0
+        # Probability of mutation 
+        self.thr = 0.3
 
         # initialize random weights
         self.wih1 = np.random.normal(0.0, pow(self.input, -0.5), (self.hidden1, self.input))
@@ -50,21 +50,19 @@ class Agent:
 
         
         # strength of the mutation
-        factor = 0.1
-        # threshold of mutation
-        thr = 0.9
+        factor = 1
 
-        if np.random.rand() > thr:
+        if np.random.rand() > self.thr:
             self.wih1 += np.random.normal(0.0, pow(self.input, -0.5) * factor, (self.hidden1, self.input))
 
-        if np.random.rand() > thr:
+        if np.random.rand() > self.thr:
             self.wh1h2 += np.random.normal(0.0, pow(self.hidden1, -0.5) * factor, (self.hidden2, self.hidden1))
 
-        if np.random.rand() > thr:
+        if np.random.rand() > self.thr:
             self.wh2o += np.random.normal(0.0, pow(self.hidden2, -0.5) * factor, (self.output, self.hidden2))
 
     # calculate output given input
-    # 0 means cooperation, 1 betraying
+    # 0 cooperation, 1 defecting
     def calc(self, inp_list):
 
         inp = np.array(inp_list, ndmin=2).T
@@ -86,4 +84,7 @@ class Agent:
         opponent_prev_action = self.opponent_prev_action_map.get(id, 0)
         res = self.calc(opponent_prev_action)
         # introduce randomness
-        return 0 if np.random.random() < np.max(res) else 1
+        #return 0 if np.random.random() > np.max(res) else 1
+        
+        #without randomness
+        return 0 if np.max(res) <= 0.5 else 1

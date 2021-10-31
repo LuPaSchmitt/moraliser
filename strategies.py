@@ -1,3 +1,4 @@
+# 0 cooperation, 1 defecting
 SCORE_MAP = [
     [3, 0],
     [5, 1],

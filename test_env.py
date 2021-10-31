@@ -11,13 +11,15 @@ import matplotlib.pyplot as plt
 import strategies
 from strategies import SCORE_MAP
 
-np.random.seed(0)
-N = 30
+
+seed =  0
+np.random.seed(seed)
+N = 100
 agents = [Agent() for _ in range(N)]
 
 
 rounds = 10
-gens = 10000
+gens = 100
 lin = np.arange(1, gens + 1, 1)
 Info_avg = []
 Info_max = []
@@ -42,7 +44,7 @@ for i in range(gens):
     # after the run
     score = [a.score for a in agents]
     sum_score = sum(score)
-    avg = sum_score / len(score)
+    avg = np.median(score)
     max_score = max(score)
     min_score = min(score)
     # print("Maximum Score: "+ str(mscore)+" Average Score "+ str(np.round(avg,2)))
@@ -61,11 +63,24 @@ for i in range(gens):
             S += a.score
             
             if S > pick :
-                #create child (from one parent)
-                gen1 = a.wih1  
-                gen2 = a.wh1h2
-                gen3 =  a.wh2o
-                children[i].update(i, gen1, gen2, gen3)
+                #parent a
+                gen1a = a.wih1  
+                gen2a = a.wh1h2
+                gen3a =  a.wh2o
+                break
+        S = 0
+        pick = random.randrange(0,sum_score)
+        
+        for a in agents:
+            S += a.score
+            
+            if S > pick :
+                #parent b
+                gen1b = a.wih1  
+                gen2b = a.wh1h2
+                gen3b =  a.wh2o
+                #create child
+                children[i].update(i, gen1a if np.random.random() > 0.5 else gen1b , gen2a if np.random.random() > 0.5 else gen2b, gen3a if np.random.random() > 0.5 else gen3b)
                 children[i].mutate()
                 break
             
@@ -80,4 +95,5 @@ for i in range(gens):
 plt.plot(lin, Info_avg)
 plt.plot(lin, Info_max)
 plt.plot(lin, Info_min)
-plt.savefig('ring.png')
+text = "Ring_NoA_"+str(N)+"Gen_"+str(gens)+"Rounds_"+str(rounds)+"Seed_"+str(seed)
+plt.savefig(text + '.png')
