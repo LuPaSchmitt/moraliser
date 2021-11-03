@@ -8,65 +8,70 @@ Created on Thu Oct 14 17:55:03 2021
 import numpy as np
 import scipy.special
 
-names = ["Otto","Rüdiger","Hans","Gustav","Alfred","Norbert","Peter","Thomas","Egon","Heinrich"]
 
 class Agent:
-    
+
+    id_counter = 0
     def __init__(self):
-        
-        # get a random name (needs to be improved)
-        self.name = np.random.choice(names)
-        #maps between (0,1)
+        self.id = Agent.id_counter
+        Agent.id_counter += 1
+        # maps between (0,1)
         self.activation_function = lambda x: scipy.special.expit(x)
-        
+        self.opponent_prev_action_map = {}  # id -> last action
+
         # structure of the nn
         self.input = 1
         self.hidden1 = 3
         self.hidden2 = 3
         self.output = 1
+        # last interaction
+        self.li = 0
 
         # Score
         self.score = 0
-        
-        # Number of Mutation
-        self.mut = 0
+
+        # Probability of mutation 
+        self.thr = 0.1
+        #strength of mutation
+        self.strength = 1
 
         # initialize random weights
         self.wih1 = np.random.normal(0.0, pow(self.input, -0.5), (self.hidden1, self.input))
         self.wh1h2 = np.random.normal(0.0, pow(self.hidden1, -0.5), (self.hidden2, self.hidden1))
         self.wh2o = np.random.normal(0.0, pow(self.hidden2, -0.5), (self.output, self.hidden2))
+
+    def update(self, ID, gen1, gen2, gen3,strength):
         
-        pass
-    
-    def update(self,name,gen1,gen2,gen3):
-        
-        self.name = name
+        self.id = ID
         self.wih1 = gen1
         self.wh1h2 = gen2
         self.wh2o = gen3
+        self.strength = strength
 
     # just a prototype - probably has to be adjusted (not just the numbers and threshold)
     def mutate(self):
+
         
-        self.mut += 1
-        # strength of the mutation
-        factor = 0.05
-        # threshold of mutation
-        thr = 0.5
+        if np.random.rand() > self.thr:
+            self.strength += (0.5-np.random.rand())*0.1
         
-        if( np.random.rand() > thr):
-            self.wih1 += np.random.normal(0.0, pow(self.input, -0.5)*factor, (self.hidden1, self.input))
-            
-        if( np.random.rand() > thr):   
-            self.wh1h2 += np.random.normal(0.0, pow(self.hidden1, -0.5)*factor, (self.hidden2, self.hidden1))
-            
-        if( np.random.rand() > thr):
-            self.wh2o += np.random.normal(0.0, pow(self.hidden2, -0.5)*factor, (self.output, self.hidden2))
+        if self.strength < 0 :
+            self.strength = 0
             
 
+        if np.random.rand() > self.thr:
+            self.wih1 += np.random.normal(0.0, pow(self.input, -0.5) * self.strength, (self.hidden1, self.input))
+
+        if np.random.rand() > self.thr:
+            self.wh1h2 += np.random.normal(0.0, pow(self.hidden1, -0.5) * self.strength, (self.hidden2, self.hidden1))
+
+        if np.random.rand() > self.thr:
+            self.wh2o += np.random.normal(0.0, pow(self.hidden2, -0.5) * self.strength, (self.output, self.hidden2))
+
     # calculate output given input
+    # 0 cooperation, 1 defecting
     def calc(self, inp_list):
-        
+
         inp = np.array(inp_list, ndmin=2).T
         hidden1_inputs = np.dot(self.wih1, inp)
         hidden1_outputs = self.activation_function(hidden1_inputs)
@@ -78,10 +83,17 @@ class Agent:
         final_outputs = self.activation_function(final_inputs)
 
         return final_outputs
-    
-    def reward(self,z):
-        self.score += z
-        
-    def reset_score(self):
-        self.score = 0
 
+    def get_data(self):
+        return (self.wih1.copy(), self.wh1h2.copy(), self.wh2o.copy(), self.strength)
+
+    def action(self, id, prob):
+        opponent_prev_action = self.opponent_prev_action_map.get(id, 0)
+        res = self.calc(opponent_prev_action)
+   
+        if prob:
+            # introduce randomness
+            return 0 if np.random.random() > np.max(res) else 1
+        
+        #without randomness
+        return 0 if np.max(res) <= 0.5 else 1
