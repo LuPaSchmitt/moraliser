@@ -23,13 +23,15 @@ class PDElement(TextElement):
         pass
 
     def render(self, model: PDModel):
-        return f"Cooperating agents: {model.num_cooperating_agents}"
+        return f"Cooperating agents: {model.num_cooperating_agents / len(model.agents) * 100:.2f}%"
 
 
 pd_elem = PDElement()
 score_chart = ChartModule([
-    {"Label": "Cooperating_Agents", "Color": "Blue"},
-    {"Label": "Total_Scores", "Color": "Black"},
+    # {"Label": "Cooperating_Agents", "Color": "Blue"},
+    # {"Label": "Total_Scores", "Color": "Black"},
+    {"Label": "Max_Score", "Color": "Orange"},
+    {"Label": "Min_Score", "Color": "Green"},
 ], data_collector_name='data_collector')
 
 server = ModularServer(PDModel, [canvas_element, pd_elem, score_chart], "Evolution of Prisoner's Dilemma", model_params)

@@ -29,13 +29,15 @@ class PDAgent(Agent):
         self.score = 0
         # Assuming that neighbors don't change throughout the game
         self.neighbors = self.grid.get_neighbors(self.pos, moore=NEIGHBOR_TYPE == 'moore', include_center=False, radius=NEIGHBOR_RADIUS)
-        # x, y = self.pos
-        # self.neighbors = [self.grid[x + 1 if x % 2 == 0 else x - 1, y]]
         if isinstance(starting_action, int):
             self.action = {other.unique_id: starting_action for other in self.neighbors}
         else:
             actions = self.random.choices([0, 1], k=len(self.neighbors))
             self.action = {other.unique_id: action for other, action in zip(self.neighbors, actions)}
+
+    @property
+    def defecting_ratio(self):
+        return sum(self.action.values()) / len(self.neighbors)
 
     @property
     def is_cooperating(self):
