@@ -2,8 +2,8 @@ import numpy as np
 import scipy.special
 from mesa import Agent
 
-from lib.agent import PDAgent
-from lib.config import *
+from agent import PDAgent
+from config import *
 
 if NUMPY_SEED is not None:
     np.random.seed(NUMPY_SEED)

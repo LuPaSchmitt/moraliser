@@ -9,10 +9,10 @@ NEIGHBOR_TYPE = 'moore'
 # NEIGHBOR_TYPE = 'von neumann'
 NEIGHBOR_RADIUS = 1
 
-NUM_SUBSTEPS = 10  # substeps in a generation
+NUM_SUBSTEPS = 20  # substeps in a generation
 
 # GA parameters
-MUT_PROB = 0.1
+MUT_PROB = 0.2
 
 DEFAULT_WIDTH = 15
 DEFAULT_HEIGHT = 3

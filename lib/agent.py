@@ -55,6 +55,10 @@ class PDAgent(Agent):
         return sum(self.action.values()) / len(self.neighbors)
 
     @property
+    def cooperating_ratio(self):
+        return 1 - self.defecting_ratio
+
+    @property
     def is_cooperating(self):
         return self.defecting_ratio <= 0.5
 

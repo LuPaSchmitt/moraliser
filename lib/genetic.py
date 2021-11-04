@@ -5,7 +5,8 @@ from strategies import *
 
 
 def fitness_function(agent: PDAgent):
-    return agent.score
+    # return agent.score
+    return agent.cooperating_ratio
 
 
 def cross(a: PDAgent, b: PDAgent):
@@ -23,8 +24,11 @@ def cross(a: PDAgent, b: PDAgent):
         # Two neural networks
         b: NeuralAgent
         c: NeuralAgent
+        mother: NeuralAgent
         for wc, wa, wb in zip(c.data(), a.data(), b.data()):
             wc += wa if rng() < 0.5 else wb
+        # for wc, wm in zip(c.data(), mother.data()):
+        #     wc += wm
 
     return c
 
