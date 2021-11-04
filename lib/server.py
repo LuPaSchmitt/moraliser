@@ -97,7 +97,7 @@ agent_stat_chart = ChartModule([
 
 hist_elem = HistogramModule(200, 500)
 
-server = ModularServer(PDModel, [canvas_element, pd_elem, score_chart, hist_elem, agent_stat_chart], "Evolution of Prisoner's Dilemma", model_params)
+server = ModularServer(PDModel, [canvas_element, pd_elem, agent_stat_chart, score_chart, hist_elem], "Evolution of Prisoner's Dilemma", model_params)
 
 if __name__ == '__main__':
     server.launch(port=8080, open_browser=True)

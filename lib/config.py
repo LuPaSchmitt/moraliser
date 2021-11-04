@@ -13,10 +13,12 @@ NUM_SUBSTEPS = 20  # substeps in a generation
 # GA parameters
 MUT_PROB = 0.2
 
-DEFAULT_WIDTH = 15
-DEFAULT_HEIGHT = 3
+DEFAULT_WIDTH = 25
+DEFAULT_HEIGHT = 5
 TORUS_GRID = True
-CANVAS_DX = 40
+CANVAS_DX = 30
 
 MESA_SEED = None
 NUMPY_SEED = None
+
+VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio'

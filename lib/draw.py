@@ -1,6 +1,9 @@
-from agent import PDAgent
-import matplotlib.cm as cm
 import matplotlib as matplotlib
+import matplotlib.cm as cm
+
+from agent import PDAgent
+from config import VISUALIZE_GRID_TYPE
+from strategies import *
 
 
 def color_map(value, cmap_name='cool', vmin=0, vmax=1):
@@ -24,7 +27,19 @@ def draw_agent(agent: PDAgent):
     else:
         r = agent.score / agent.model.max_score
 
-    color = color_map(agent.defecting_ratio)
+    if VISUALIZE_GRID_TYPE == 'defecting_ratio':
+        color = color_map(agent.defecting_ratio)
+    elif VISUALIZE_GRID_TYPE == 'agent_type':
+        if isinstance(agent, SimpleAgent):
+            color = 'Blue'
+        elif isinstance(agent, TitForTatAgent):
+            color = 'Green'
+        elif isinstance(agent, NeuralAgent):
+            color = 'Orange'
+        else:
+            color = 'Black'
+    else:
+        color = 'Black'
 
     return {
         "Shape": "circle",

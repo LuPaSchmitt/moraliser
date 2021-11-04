@@ -5,9 +5,10 @@ from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa.time import SimultaneousActivation
 
+import config
 from agent import PDAgent
-from genetic import evolute
 from config import *
+from genetic import evolute
 from strategies import *
 
 
@@ -44,6 +45,7 @@ class PDModel(Model):
                     type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.6, 0.3, 0.1], k=1)[0]
                 else:
                     type_str = agent_type
+
                 agent = self.create_agent(type_str)
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
