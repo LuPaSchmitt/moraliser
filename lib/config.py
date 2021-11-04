@@ -5,10 +5,19 @@ PAYOFF_MAP = [
     [5, 1],
 ]
 
-# NEIGHBOR_TYPE = 'moore'
-NEIGHBOR_TYPE = 'von neumann'
+NEIGHBOR_TYPE = 'moore'
+# NEIGHBOR_TYPE = 'von neumann'
 NEIGHBOR_RADIUS = 1
 
-DEFAULT_WIDTH = 50
-DEFAULT_HEIGHT = 50
+NUM_SUBSTEPS = 10  # substeps in a generation
+
+# GA parameters
+MUT_PROB = 0.1
+
+DEFAULT_WIDTH = 15
+DEFAULT_HEIGHT = 3
 TORUS_GRID = True
+CANVAS_DX = 40
+
+MESA_SEED = None
+NUMPY_SEED = None

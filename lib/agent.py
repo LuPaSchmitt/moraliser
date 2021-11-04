@@ -1,7 +1,6 @@
 from abc import abstractmethod
 
 from mesa import Agent
-from mesa.space import SingleGrid
 
 from config import *
 
@@ -14,13 +13,13 @@ class PDAgent(Agent):
         Create a new Prisoner's Dilemma agent.
         """
         super().__init__(unique_id, model)
-        self.grid: SingleGrid = self.model.grid
 
         self.score = 0  # total scores
         self.cur_score = 0
         self.neighbors = []
         self.action = {}  # current action, maps other agent's id to my action with it
         self.next_action = {}  # for advancing
+        # TODO: more efficient implementation of action table, currently the dictionary lookup takes too much time
 
     def initialize(self, starting_action=None):
         """
@@ -28,12 +27,28 @@ class PDAgent(Agent):
         """
         self.score = 0
         # Assuming that neighbors don't change throughout the game
-        self.neighbors = self.grid.get_neighbors(self.pos, moore=NEIGHBOR_TYPE == 'moore', include_center=False, radius=NEIGHBOR_RADIUS)
+        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=NEIGHBOR_TYPE == 'moore', include_center=False, radius=NEIGHBOR_RADIUS)
         if isinstance(starting_action, int):
             self.action = {other.unique_id: starting_action for other in self.neighbors}
         else:
             actions = self.random.choices([0, 1], k=len(self.neighbors))
             self.action = {other.unique_id: action for other, action in zip(self.neighbors, actions)}
+
+    @abstractmethod
+    def clone(self):
+        """
+        Clone the agent into a new instance.
+        Notice that the cloned instance is uninitialized, loses memory and position information of the old, and is not managed by model.scheduler
+        This function is useful for genetic algorithm
+        """
+        pass
+
+    def mutate(self):
+        """
+        Possibly mutate the agent. Derived classes can have different mutation policies
+        This function is needed for genetic algorithm
+        """
+        pass
 
     @property
     def defecting_ratio(self):
@@ -41,11 +56,11 @@ class PDAgent(Agent):
 
     @property
     def is_cooperating(self):
-        return sum(self.action.values()) <= len(self.neighbors) // 2
+        return self.defecting_ratio <= 0.5
 
     @property
     def is_defecting(self):
-        return not self.is_cooperating
+        return self.defecting_ratio > 0.5
 
     @abstractmethod
     def make_action(self, other: Agent):

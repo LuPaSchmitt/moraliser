@@ -70,9 +70,9 @@ class Agent:
 
     # calculate output given input
     # 0 cooperation, 1 defecting
-    def calc(self, inp_list):
+    def calc(self, in_list):
 
-        inp = np.array(inp_list, ndmin=2).T
+        inp = np.array(in_list, ndmin=2).T
         hidden1_inputs = np.dot(self.wih1, inp)
         hidden1_outputs = self.activation_function(hidden1_inputs)
 

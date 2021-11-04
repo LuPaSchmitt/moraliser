@@ -3,7 +3,7 @@ import matplotlib.cm as cm
 import matplotlib as matplotlib
 
 
-def color_map_color(value, cmap_name='cool', vmin=0, vmax=1):
+def color_map(value, cmap_name='cool', vmin=0, vmax=1):
     # norm = plt.Normalize(vmin, vmax)
     norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
     cmap = cm.get_cmap(cmap_name)  # PiYG
@@ -19,11 +19,13 @@ def draw_agent(agent: PDAgent):
     :param agent:  the agent in the simulation
     :return: the portrayal dictionary
     """
-    if agent.model.max_score > 0:
-        r = agent.score / agent.model.max_score
+    if agent.model.max_score <= 0 or agent.score <= 0:
+        r = 0.8
     else:
-        r = 0.5
-    color = color_map_color(agent.defecting_ratio)
+        r = agent.score / agent.model.max_score
+
+    color = color_map(agent.defecting_ratio)
+
     return {
         "Shape": "circle",
         "r": r,

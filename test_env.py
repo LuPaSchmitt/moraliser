@@ -9,16 +9,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import strategies
 from strategies import SCORE_MAP
+from tqdm import tqdm
 
 prob = True
-seed = 0
+seed = 10
 np.random.seed(seed)
-N = 10
+N = 5
 agents = [Agent() for _ in range(N)]
  
 
 rounds = 10
-gens = 1000
+gens = 8000
 
 Info_avg = []
 Info_max = []
@@ -90,8 +91,8 @@ def GA2(ag):
 
 
 
-#for gen in range(gens):
-while sum_score / N <= 2*rounds*3*0.98:
+for gen in tqdm(range(gens)):
+#while sum_score / N <= 2*rounds*3*0.98:
     gen+=1
     for a in agents:
         a.score = 0
@@ -129,9 +130,9 @@ lin = np.arange(0, gen, 1)
             
         
 
-plt.plot(lin, Info_avg)
-plt.plot(lin, Info_max)
-plt.plot(lin, Info_min)
+plt.plot(lin, Info_avg, alpha=0.5)
+plt.plot(lin, Info_max, alpha=0.5)
+plt.plot(lin, Info_min, alpha=0.5)
 text = "pictures/ring/NoA_"+str(N)+"Gen_"+str(gens)+"Rounds_"+str(rounds)+"Seed_"+str(seed)+"Random_"+str(prob)
 plt.savefig(text + '.png')
 for a in agents:
