@@ -5,8 +5,7 @@ PAYOFF_MAP = [
     [5, 1],
 ]
 
-NEIGHBOR_TYPE = 'moore'
-# NEIGHBOR_TYPE = 'von neumann'
+NEIGHBOR_TYPE = 8  # 8, 4, or 2
 NEIGHBOR_RADIUS = 1
 
 NUM_SUBSTEPS = 20  # substeps in a generation

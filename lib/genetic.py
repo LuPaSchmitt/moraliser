@@ -4,11 +4,6 @@ from agent import PDAgent
 from strategies import *
 
 
-def fitness_function(agent: PDAgent):
-    # return agent.score
-    return agent.cooperating_ratio
-
-
 def cross(a: PDAgent, b: PDAgent):
     rng = a.random.random
     mother = a if rng() < 0.5 else b
@@ -33,7 +28,7 @@ def cross(a: PDAgent, b: PDAgent):
     return c
 
 
-def evolute(population: List[PDAgent]) -> List[PDAgent]:
+def evolute(population: List[PDAgent], fitness_function) -> List[PDAgent]:
     assert len(population) >= 2
     random = population[0].random
 

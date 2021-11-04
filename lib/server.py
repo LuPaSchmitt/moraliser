@@ -11,6 +11,31 @@ model_params = {
     "width": DEFAULT_WIDTH,
     "height": DEFAULT_HEIGHT,
     "seed": MESA_SEED,
+    "num_substeps": UserSettableParameter(
+        "slider",
+        "Number of steps in each generation",
+        value=NUM_SUBSTEPS,
+        min_value=1,
+        max_value=50,
+    ),
+    "fitness_type": UserSettableParameter(
+        "choice",
+        "Fitness function type",
+        value="score",
+        choices=['score', 'cooperating_ratio', 'defecting_ratio'],
+    ),
+    "agent_type": UserSettableParameter(
+        "choice",
+        "Agent type",
+        value="mixed",
+        choices=['neural', 'tit_for_tat', 'simple', 'mixed'],
+    ),
+    "neighbor_type": UserSettableParameter(
+        "choice",
+        "Neighbor type",
+        value=NEIGHBOR_TYPE,
+        choices=[8, 4, 2],
+    ),
 }
 
 canvas_element = CanvasGrid(
@@ -63,13 +88,16 @@ score_chart = ChartModule([
     {"Label": "Min_Score", "Color": "Green"},
 ], data_collector_name='data_collector')
 
-cooperation_chart = ChartModule([
+agent_stat_chart = ChartModule([
     {"Label": "Cooperating_Agents", "Color": "Black"},
+    {"Label": "Simple_Agents", "Color": "Blue"},
+    {"Label": "Tit_for_tat_Agents", "Color": "Green"},
+    {"Label": "Neural_Agents", "Color": "Orange"},
 ], data_collector_name='data_collector')
 
 hist_elem = HistogramModule(200, 500)
 
-server = ModularServer(PDModel, [canvas_element, pd_elem, score_chart, hist_elem, cooperation_chart], "Evolution of Prisoner's Dilemma", model_params)
+server = ModularServer(PDModel, [canvas_element, pd_elem, score_chart, hist_elem, agent_stat_chart], "Evolution of Prisoner's Dilemma", model_params)
 
 if __name__ == '__main__':
-    server.launch(port=8080, open_browser=False)
+    server.launch(port=8080, open_browser=True)

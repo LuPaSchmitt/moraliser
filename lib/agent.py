@@ -21,13 +21,21 @@ class PDAgent(Agent):
         self.next_action = {}  # for advancing
         # TODO: more efficient implementation of action table, currently the dictionary lookup takes too much time
 
-    def initialize(self, starting_action=None):
+    def initialize(self, neighbor_type, starting_action=None):
         """
         Called before model runs
         """
         self.score = 0
         # Assuming that neighbors don't change throughout the game
-        self.neighbors = self.model.grid.get_neighbors(self.pos, moore=NEIGHBOR_TYPE == 'moore', include_center=False, radius=NEIGHBOR_RADIUS)
+        if neighbor_type == 8:
+            self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False, radius=NEIGHBOR_RADIUS)
+        elif neighbor_type == 4:
+            self.neighbors = self.model.grid.get_neighbors(self.pos, moore=False, include_center=False, radius=NEIGHBOR_RADIUS)
+        elif neighbor_type == 2:
+            self.neighbors = [
+                self.model.grid[self.pos[0] - 1, self.pos[1]],
+                self.model.grid[self.pos[0] + 1, self.pos[1]]
+            ]
         if isinstance(starting_action, int):
             self.action = {other.unique_id: starting_action for other in self.neighbors}
         else:

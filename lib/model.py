@@ -14,7 +14,8 @@ from strategies import *
 class PDModel(Model):
     """Model class for iterated, spatial prisoner's dilemma model."""
 
-    def __init__(self, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, num_substeps=NUM_SUBSTEPS, seed=None):
+    def __init__(self, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT,
+                 num_substeps=NUM_SUBSTEPS, seed=None, neighbor_type=NEIGHBOR_TYPE, fitness_type='score', agent_type='neural'):
         """
         Create a new Spatial Prisoners' Dilemma Model.
         """
@@ -25,25 +26,40 @@ class PDModel(Model):
         self.num_substeps = num_substeps  # substeps within each generation
         self.schedule = SimultaneousActivation(self)
         self.generations = 0
+        self.neighbor_type = neighbor_type
+
+        if fitness_type == 'score':
+            self.fitness_function = lambda a: a.score
+        elif fitness_type == 'cooperating_ratio':
+            self.fitness_function = lambda a: a.cooperating_ratio
+        elif fitness_type == 'defecting_ratio':
+            self.fitness_function = lambda a: a.defecting_ratio
+        else:
+            raise ValueError(f'Unknown fitness type {fitness_type}')
 
         # Create agents
         for x in range(width):
             for y in range(height):
-                # agent = SimpleAgent(self.next_id(), self)
-                # agent = TitForTatAgent(self.next_id(), self)
-                agent = NeuralAgent(self.next_id(), self, stochastic=True)
-                agent.random_weights()
+                if agent_type == 'mixed':
+                    type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.6, 0.3, 0.1], k=1)[0]
+                else:
+                    type_str = agent_type
+                agent = self.create_agent(type_str)
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
 
         self.agents: List[PDAgent] = self.schedule.agents
         for agent in self.agents:
-            agent.initialize()
+            agent.initialize(self.neighbor_type)
 
+        # Statistics
         self.total_scores = 0
         self.num_cooperating_agents = 0
         self.max_score = 0
         self.min_score = 0
+        self.num_simples = 0
+        self.num_tit_for_tats = 0
+        self.num_neurals = 0
 
         # Collect for each step
         self.data_collector = DataCollector(
@@ -53,6 +69,9 @@ class PDModel(Model):
                 'Mean_Score': lambda m: m.total_scores / len(m.agents),
                 'Max_Score': 'max_score',
                 'Min_Score': 'min_score',
+                'Simple_Agents': 'num_simples',
+                'Tit_for_tat_Agents': 'num_tit_for_tats',
+                'Neural_Agents': 'num_neurals',
             },
             agent_reporters={
                 'Scores': 'score',
@@ -70,11 +89,26 @@ class PDModel(Model):
 
         self.data_collector.collect(self)
 
+    def create_agent(self, type_str):
+        if type_str == 'neural':
+            agent = NeuralAgent(self.next_id(), self, stochastic=True)
+            agent.random_weights()
+        elif type_str == 'tit_for_tat':
+            agent = TitForTatAgent(self.next_id(), self)
+        elif type_str == 'simple':
+            agent = SimpleAgent(self.next_id(), self)
+        else:
+            raise ValueError(f'Unknown agent type {type_str}')
+        return agent
+
     def update_stats(self):
         self.num_cooperating_agents = sum(a.is_cooperating for a in self.agents)
         self.total_scores = sum(a.score for a in self.agents)
         self.max_score = max(a.score for a in self.agents)
         self.min_score = min(a.score for a in self.agents)
+        self.num_simples = sum(1 for a in self.agents if isinstance(a, SimpleAgent))
+        self.num_tit_for_tats = sum(1 for a in self.agents if isinstance(a, TitForTatAgent))
+        self.num_neurals = sum(1 for a in self.agents if isinstance(a, NeuralAgent))
 
     def substep(self):
         """
@@ -98,7 +132,7 @@ class PDModel(Model):
         """
         Apply genetic algorithm to select dominant agents
         """
-        children = evolute(self.agents)
+        children = evolute(self.agents, self.fitness_function)
 
         # Recreate agents
         width, height = self.grid.width, self.grid.height
@@ -114,7 +148,7 @@ class PDModel(Model):
 
         self.agents: List[PDAgent] = self.schedule.agents
         for agent in self.agents:
-            agent.initialize()
+            agent.initialize(self.neighbor_type)
 
         self.generations += 1
 
