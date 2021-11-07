@@ -13,8 +13,8 @@ NUM_SUBSTEPS = 20  # substeps in a generation
 # GA parameters
 MUT_PROB = 0.2
 
-DEFAULT_WIDTH = 25
-DEFAULT_HEIGHT = 5
+DEFAULT_WIDTH = 30
+DEFAULT_HEIGHT = 30
 TORUS_GRID = True
 CANVAS_DX = 30
 

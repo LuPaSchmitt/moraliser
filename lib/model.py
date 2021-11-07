@@ -8,7 +8,7 @@ from mesa.time import SimultaneousActivation
 import config
 from agent import PDAgent
 from config import *
-from genetic import evolute
+from genetic import *
 from strategies import *
 
 
@@ -153,13 +153,62 @@ class PDModel(Model):
             agent.initialize(self.neighbor_type)
 
         self.generations += 1
+        
+    def next_generation(self):
+        """
+        Apply genetic algorithm to select dominant agents
+        """
+        children = evolute(self.agents, self.fitness_function)
+
+        # Recreate agents
+        width, height = self.grid.width, self.grid.height
+        self.grid = SingleGrid(width, height, torus=TORUS_GRID)
+        self.schedule = SimultaneousActivation(self)
+        self.current_id = 0
+        for x in range(width):
+            for y in range(height):
+                agent = children.pop()
+                agent.unique_id = self.next_id()
+                self.grid.place_agent(agent, (x, y))
+                self.schedule.add(agent)
+
+        self.agents: List[PDAgent] = self.schedule.agents
+        for agent in self.agents:
+            agent.initialize(self.neighbor_type)
+
+        self.generations += 1
+        
+    def next_generation_local(self):
+        """
+        Apply genetic algorithm to select dominant agents
+        """
+        children = evolute_local(self.agents, self.fitness_function)
+
+        # Recreate agents
+        width, height = self.grid.width, self.grid.height
+        self.grid = SingleGrid(width, height, torus=TORUS_GRID)
+        self.schedule = SimultaneousActivation(self)
+        self.current_id = 0
+        for x in range(width):
+            for y in range(height):
+                agent = children.pop(0)
+                agent.unique_id = self.next_id()
+                self.grid.place_agent(agent, (x, y))
+                self.schedule.add(agent)
+
+        self.agents: List[PDAgent] = self.schedule.agents
+        for agent in self.agents:
+            agent.initialize(self.neighbor_type)
+
+        self.generations += 1
+        
 
     def step(self):
         """
         Each generation consists of several substeps. Genetic algorithm is applied at the end of the step.
         """
         if self.schedule.steps >= self.num_substeps:
-            self.next_generation()
+            self.next_generation_local()
 
         self.substep()
         self.update_stats()

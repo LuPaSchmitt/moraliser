@@ -28,7 +28,7 @@ class NeuralAgent(PDAgent):
         # strength of mutation
         self.strength = mut_strength
 
-        # initialize random weights
+        # initialize weights
         self.wih1 = np.zeros((self.hidden1, self.input))
         self.wh1h2 = np.zeros((self.hidden2, self.hidden1))
         self.wh2o = np.zeros((self.output, self.hidden2))
@@ -81,7 +81,7 @@ class NeuralAgent(PDAgent):
 
         # Possibly make the action more stochastic
         if self.stochastic:
-            return 0 if self.random.random() <= output else 1
+            return 0 if self.random.random() >= output else 1
         else:
             return 0 if output <= 0.5 else 1
 

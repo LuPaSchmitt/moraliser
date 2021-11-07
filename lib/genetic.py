@@ -42,3 +42,19 @@ def evolute(population: List[PDAgent], fitness_function) -> List[PDAgent]:
         children.append(c)
 
     return children
+
+def evolute_local(population: List[PDAgent], fitness_function) -> List[PDAgent]:
+    children = []
+    for a in population:    
+        neighbors = a.neighbors
+        assert len(neighbors) >= 2
+        random = population[0].random
+        
+        weights = [fitness_function(n) for n in neighbors]
+        
+        a, b = random.choices(neighbors, weights, k=2)
+        c = cross(a, b)
+        c.mutate()
+        children.append(c)
+
+    return children
