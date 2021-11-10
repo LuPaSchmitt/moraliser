@@ -8,6 +8,9 @@ class TitForTatAgent(PDAgent):
         super().__init__(unique_id, model)
         self.other_prev_actions = {}  # Map other's id to its previous action
 
+    def reproducable(self) -> bool:
+        return False
+
     def clone(self):
         return TitForTatAgent(self.unique_id, self.model)
 

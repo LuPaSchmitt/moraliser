@@ -33,10 +33,15 @@ class PDAgent(Agent):
         elif neighbor_type == 4:
             self.neighbors = self.model.grid.get_neighbors(self.pos, moore=False, include_center=False, radius=NEIGHBOR_RADIUS)
         elif neighbor_type == 2:
-            self.neighbors = [
-                self.model.grid[self.pos[0] - 1, self.pos[1]],
-                self.model.grid[self.pos[0] + 1, self.pos[1]]
-            ]
+            if TORUS_GRID:
+                self.neighbors = [
+                    self.model.grid[self.pos[0] - 1, self.pos[1]],
+                    self.model.grid[self.pos[0] + 1, self.pos[1]]
+                ]
+            else:
+                self.neighbors = []
+                if self.pos[0] - 1 >= 0: self.neighbors.append(self.model.grid[self.pos[0] - 1, self.pos[1]])
+                if self.pos[0] + 1 < self.model.grid.width: self.neighbors.append(self.model.grid[self.pos[0] + 1, self.pos[1]])
         if isinstance(starting_action, int):
             self.action = {other.unique_id: starting_action for other in self.neighbors}
         else:
@@ -49,6 +54,13 @@ class PDAgent(Agent):
         Clone the agent into a new instance.
         Notice that the cloned instance is uninitialized, loses memory and position information of the old, and is not managed by model.scheduler
         This function is useful for genetic algorithm
+        """
+        pass
+
+    @abstractmethod
+    def reproducable(self) -> bool:
+        """
+        Is the agent able to participate in the 'cross' process in GA
         """
         pass
 

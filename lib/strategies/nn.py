@@ -38,6 +38,9 @@ class NeuralAgent(PDAgent):
         self.wh2o = np.zeros((self.output, self.hidden2))
         self.bo = np.zeros(self.output)
 
+    def reproducable(self) -> bool:
+        return True
+
     def clone(self):
         return NeuralAgent(self.unique_id, self.model, self.stochastic, self.thr, self.strength)
 

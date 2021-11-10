@@ -19,7 +19,8 @@ class PDModel(Model):
     """Model class for iterated, spatial prisoner's dilemma model."""
 
     def __init__(self, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT,
-                 num_substeps=NUM_SUBSTEPS, seed=None, neighbor_type=NEIGHBOR_TYPE, fitness_type='score', agent_type='neural'):
+                 num_substeps=NUM_SUBSTEPS, seed=None, neighbor_type=NEIGHBOR_TYPE, fitness_type='score', agent_type='neural',
+                 agent_type_map=None):
         """
         Create a new Spatial Prisoners' Dilemma Model.
         """
@@ -44,10 +45,13 @@ class PDModel(Model):
         # Create agents
         for x in range(width):
             for y in range(height):
-                if agent_type == 'mixed':
-                    type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.6, 0.3, 0.1], k=1)[0]
+                if agent_type_map is not None:
+                    type_str = agent_type_map(x, y)
                 else:
-                    type_str = agent_type
+                    if agent_type == 'mixed':
+                        type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.6, 0.3, 0.1], k=1)[0]
+                    else:
+                        type_str = agent_type
 
                 agent = self.create_agent(type_str)
                 agent.inherited_attr = '#' + ''.join(self.random.choices('ABCDEF0123456789', k=6))
@@ -105,6 +109,10 @@ class PDModel(Model):
             agent = TitForTatAgent(self.next_id(), self)
         elif type_str == 'simple':
             agent = SimpleAgent(self.next_id(), self)
+        elif type_str == 'good':
+            agent = GoodAgent(self.next_id(), self)
+        elif type_str == 'bad':
+            agent = BadAgent(self.next_id(), self)
         else:
             raise ValueError(f'Unknown agent type {type_str}')
         return agent

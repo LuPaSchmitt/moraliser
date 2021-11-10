@@ -50,16 +50,20 @@ def evolute(population: List[PDAgent], fitness_function) -> List[PDAgent]:
 def evolute_local(population: List[PDAgent], fitness_function) -> List[PDAgent]:
     children = []
     for agent in population:
-        candidates = [agent] + agent.neighbors
-        assert len(candidates) >= 2
-        random = population[0].random
+        if not agent.reproducable():
+            children.append(agent)
+        else:
+            candidates = [agent] + agent.neighbors
+            candidates = [c for c in candidates if c.reproducable()]
+            assert len(candidates) >= 2
+            random = population[0].random
 
-        weights = [fitness_function(n) for n in candidates]
+            weights = [fitness_function(n) for n in candidates]
 
-        a, b = random.choices(candidates, weights, k=2)
-        c = cross(a, b)
-        c.mutate()
-        c.pos = agent.pos
-        children.append(c)
+            a, b = random.choices(candidates, weights, k=2)
+            c = cross(a, b)
+            c.mutate()
+            c.pos = agent.pos
+            children.append(c)
 
     return children

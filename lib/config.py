@@ -11,15 +11,15 @@ NEIGHBOR_RADIUS = 1
 NUM_SUBSTEPS = 10  # substeps in a generation
 
 # GA parameters
-MUT_PROB = 0.2
-MUT_STRENGTH = 1.0
+MUT_PROB = 0.9
+MUT_STRENGTH = 1
 
 DEFAULT_WIDTH = 20
 DEFAULT_HEIGHT = 20
-TORUS_GRID = True
+TORUS_GRID = False
 CANVAS_DX = 30
 
-MESA_SEED = 2
-NUMPY_SEED = 2
+MESA_SEED = 3
+NUMPY_SEED = 3
 
 VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio'

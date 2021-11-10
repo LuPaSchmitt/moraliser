@@ -2,8 +2,15 @@ from lib.model import *
 from matplotlib import pyplot as plt
 import numpy as np
 
-m = PDModel(seed=MESA_SEED, agent_type='mixed')
-m.run(1000)
+
+def agent_type_map(x, y):
+    if x in [0, 2, 4, 6, 8]:
+        return 'tit_for_tat'
+    return 'neural'
+
+
+m = PDModel(10, 10, seed=MESA_SEED, agent_type='mixed', agent_type_map=agent_type_map)
+m.run(10000)
 
 data = m.data_collector.get_model_vars_dataframe()
 

@@ -7,10 +7,20 @@ from model import PDModel
 from config import *
 import numpy as np
 
+
+def agent_type_map(x, y):
+    if x == 5 or x == 0:
+        return 'tit_for_tat'
+    if x == 6:
+        return 'bad'
+    return 'neural'
+
+
 model_params = {
-    "width": DEFAULT_WIDTH,
-    "height": DEFAULT_HEIGHT,
+    "width": 10,
+    "height": 10,
     "seed": MESA_SEED,
+    "agent_type_map": agent_type_map,
     "num_substeps": UserSettableParameter(
         "slider",
         "Number of steps in each generation",

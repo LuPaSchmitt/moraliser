@@ -33,10 +33,15 @@ def draw_agent(agent: PDAgent):
         if isinstance(agent, SimpleAgent):
             color = 'Blue'
         elif isinstance(agent, TitForTatAgent):
+            color = 'Orange'
+        elif isinstance(agent, GoodAgent):
             color = 'Green'
+        elif isinstance(agent, BadAgent):
+            color = 'Red'
         elif isinstance(agent, NeuralAgent):
             # color = 'Orange'
-            color = agent.inherited_attr
+            color = color_map(agent.feature_vector()[0])
+            # color = agent.inherited_attr
         else:
             color = 'Black'
     else:
