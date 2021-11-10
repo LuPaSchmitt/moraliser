@@ -10,12 +10,14 @@ if NUMPY_SEED is not None:
 
 
 class NeuralAgent(PDAgent):
-    def __init__(self, unique_id, model, stochastic=False, mut_prob=MUT_PROB, mut_strength=1):
+    def __init__(self, unique_id, model, stochastic=False, mut_prob=MUT_PROB, mut_strength=MUT_STRENGTH):
         super().__init__(unique_id, model)
         self.other_prev_actions = {}  # Map other's id to its previous action
         self.stochastic = stochastic
 
-        self.activation_function = lambda x: scipy.special.expit(x)
+        self.final_activation = scipy.special.expit
+        self.relu = lambda x: x * (x > 0)
+        # self.final_activation = lambda x: np.clip(x, 0, 1)
 
         # structure of the nn
         self.input = 1
@@ -30,32 +32,36 @@ class NeuralAgent(PDAgent):
 
         # initialize weights
         self.wih1 = np.zeros((self.hidden1, self.input))
+        self.b1 = np.zeros(self.hidden1)
         self.wh1h2 = np.zeros((self.hidden2, self.hidden1))
+        self.b2 = np.zeros(self.hidden2)
         self.wh2o = np.zeros((self.output, self.hidden2))
+        self.bo = np.zeros(self.output)
 
     def clone(self):
         return NeuralAgent(self.unique_id, self.model, self.stochastic, self.thr, self.strength)
 
     def random_weights(self):
         self.wih1 = np.random.normal(0.0, pow(self.input, -0.5), (self.hidden1, self.input))
+        self.b1 = np.random.normal(0.0, pow(self.input, -0.5), self.hidden1)
         self.wh1h2 = np.random.normal(0.0, pow(self.hidden1, -0.5), (self.hidden2, self.hidden1))
+        self.b2 = np.random.normal(0.0, pow(self.hidden1, -0.5), self.hidden2)
         self.wh2o = np.random.normal(0.0, pow(self.hidden2, -0.5), (self.output, self.hidden2))
+        self.bo = np.random.normal(0.0, pow(self.hidden2, -0.5), self.output)
 
     def mutate(self):
         if np.random.rand() < self.thr:
-            self.strength += (0.5 - np.random.rand()) * 0.1
-
-        if self.strength < 0:
-            self.strength = 0
-
-        if np.random.rand() < self.thr:
             self.wih1 += np.random.normal(0.0, pow(self.input, -0.5) * self.strength, (self.hidden1, self.input))
-
+        if np.random.rand() < self.thr:
+            self.b1 += np.random.normal(0.0, pow(self.input, -0.5) * self.strength, self.hidden1)
         if np.random.rand() < self.thr:
             self.wh1h2 += np.random.normal(0.0, pow(self.hidden1, -0.5) * self.strength, (self.hidden2, self.hidden1))
-
+        if np.random.rand() < self.thr:
+            self.b2 += np.random.normal(0.0, pow(self.hidden1, -0.5) * self.strength, self.hidden2)
         if np.random.rand() < self.thr:
             self.wh2o += np.random.normal(0.0, pow(self.hidden2, -0.5) * self.strength, (self.output, self.hidden2))
+        if np.random.rand() < self.thr:
+            self.bo += np.random.normal(0.0, pow(self.hidden2, -0.5) * self.strength, self.output)
 
     def forward(self, inputs: np.ndarray):
         """
@@ -64,14 +70,14 @@ class NeuralAgent(PDAgent):
         :param inputs: history of other's action, should be a list of 0 or 1
         :return: a 1x1 tensor in [0, 1], indicating the action tendency
         """
-        x = self.wih1 @ inputs
-        x = self.activation_function(x)
+        x = self.wih1 @ inputs + self.b1
+        x = self.relu(x)
 
-        x = self.wh1h2 @ x
-        x = self.activation_function(x)
+        x = self.wh1h2 @ x + self.b2
+        x = self.relu(x)
 
-        x = self.wh2o @ x
-        x = self.activation_function(x)  # [0, 1]
+        x = self.wh2o @ x + self.bo
+        x = self.final_activation(x)  # [0, 1]
 
         return x
 
@@ -89,10 +95,20 @@ class NeuralAgent(PDAgent):
         # Update history
         self.other_prev_actions = {other.unique_id: other.action[self.unique_id] for other in self.neighbors}
 
+    def feature_vector(self):
+        '''
+        Given 0 or 1 as input, return the two outputs of the network
+        '''
+        inputs = np.array([[0], [1]])
+        return np.array([self.forward(x) for x in inputs])
+
     def data(self):
         """
         Iterate through all weight matrices
         """
         yield self.wih1
+        yield self.b1
         yield self.wh1h2
+        yield self.b2
         yield self.wh2o
+        yield self.bo

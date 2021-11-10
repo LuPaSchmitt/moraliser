@@ -27,7 +27,7 @@ model_params = {
     "agent_type": UserSettableParameter(
         "choice",
         "Agent type",
-        value="mixed",
+        value="neural",
         choices=['neural', 'tit_for_tat', 'simple', 'mixed'],
     ),
     "neighbor_type": UserSettableParameter(
@@ -76,7 +76,7 @@ class PDElement(TextElement):
         pass
 
     def render(self, model: PDModel):
-        return f"Cooperating agents: {model.num_cooperating_agents / len(model.agents) * 100:.2f}%"
+        return f"Generation: {model.generations} Cooperating agents: {model.num_cooperating_agents / len(model.agents) * 100:.2f}%"
 
 
 pd_elem = PDElement()

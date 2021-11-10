@@ -52,7 +52,7 @@ class PDModel(Model):
 
         self.agents: List[PDAgent] = self.schedule.agents
         for agent in self.agents:
-            agent.initialize(self.neighbor_type)
+            agent.initialize(self.neighbor_type, 0)
 
         # Statistics
         self.total_scores = 0
@@ -150,34 +150,10 @@ class PDModel(Model):
 
         self.agents: List[PDAgent] = self.schedule.agents
         for agent in self.agents:
-            agent.initialize(self.neighbor_type)
+            agent.initialize(self.neighbor_type, 0)
 
         self.generations += 1
-        
-    def next_generation(self):
-        """
-        Apply genetic algorithm to select dominant agents
-        """
-        children = evolute(self.agents, self.fitness_function)
 
-        # Recreate agents
-        width, height = self.grid.width, self.grid.height
-        self.grid = SingleGrid(width, height, torus=TORUS_GRID)
-        self.schedule = SimultaneousActivation(self)
-        self.current_id = 0
-        for x in range(width):
-            for y in range(height):
-                agent = children.pop()
-                agent.unique_id = self.next_id()
-                self.grid.place_agent(agent, (x, y))
-                self.schedule.add(agent)
-
-        self.agents: List[PDAgent] = self.schedule.agents
-        for agent in self.agents:
-            agent.initialize(self.neighbor_type)
-
-        self.generations += 1
-        
     def next_generation_local(self):
         """
         Apply genetic algorithm to select dominant agents
@@ -198,21 +174,27 @@ class PDModel(Model):
 
         self.agents: List[PDAgent] = self.schedule.agents
         for agent in self.agents:
-            agent.initialize(self.neighbor_type)
+            agent.initialize(self.neighbor_type, 0)
 
         self.generations += 1
-        
 
     def step(self):
         """
         Each generation consists of several substeps. Genetic algorithm is applied at the end of the step.
         """
-        if self.schedule.steps >= self.num_substeps:
-            self.next_generation_local()
+        # if self.schedule.steps >= self.num_substeps:
+        #     self.next_generation_local()
 
-        self.substep()
+        for i in range(self.num_substeps):
+            self.substep()
         self.update_stats()
         self.data_collector.collect(self)
+        for agent in self.agents:
+            if isinstance(agent, NeuralAgent):
+                f = agent.feature_vector()
+                print(f[0], f[1])
+
+        self.next_generation_local()
 
     def run(self, n):
         """Run the model for n steps (generations)"""

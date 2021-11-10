@@ -20,10 +20,10 @@ def cross(a: PDAgent, b: PDAgent):
         b: NeuralAgent
         c: NeuralAgent
         mother: NeuralAgent
-        for wc, wa, wb in zip(c.data(), a.data(), b.data()):
-            wc += wa if rng() < 0.5 else wb
-        # for wc, wm in zip(c.data(), mother.data()):
-        #     wc += wm
+        # for wc, wa, wb in zip(c.data(), a.data(), b.data()):
+        #     wc += wa if rng() < 0.5 else wb
+        for wc, wm in zip(c.data(), mother.data()):
+            wc += wm
 
     return c
 
@@ -43,16 +43,17 @@ def evolute(population: List[PDAgent], fitness_function) -> List[PDAgent]:
 
     return children
 
+
 def evolute_local(population: List[PDAgent], fitness_function) -> List[PDAgent]:
     children = []
-    for a in population:    
-        neighbors = a.neighbors
-        assert len(neighbors) >= 2
+    for a in population:
+        candidates = [a] + a.neighbors
+        assert len(candidates) >= 2
         random = population[0].random
-        
-        weights = [fitness_function(n) for n in neighbors]
-        
-        a, b = random.choices(neighbors, weights, k=2)
+
+        weights = [fitness_function(n) for n in candidates]
+
+        a, b = random.choices(candidates, weights, k=2)
         c = cross(a, b)
         c.mutate()
         children.append(c)
