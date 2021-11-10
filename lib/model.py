@@ -5,11 +5,14 @@ from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa.time import SimultaneousActivation
 
-import config
-from agent import PDAgent
-from config import *
-from genetic import *
-from strategies import *
+import lib.config
+from lib.agent import PDAgent
+from lib.config import *
+from lib.genetic import *
+from lib.strategies import *
+import numpy as np
+
+from tqdm import tqdm
 
 
 class PDModel(Model):
@@ -63,6 +66,7 @@ class PDModel(Model):
         self.num_simples = 0
         self.num_tit_for_tats = 0
         self.num_neurals = 0
+        self.mean_feature_vector = None
 
         # Collect for each step
         self.data_collector = DataCollector(
@@ -75,6 +79,7 @@ class PDModel(Model):
                 'Simple_Agents': 'num_simples',
                 'Tit_for_tat_Agents': 'num_tit_for_tats',
                 'Neural_Agents': 'num_neurals',
+                'Mean_Feature_Vector': 'mean_feature_vector',
             },
             agent_reporters={
                 'Scores': 'score',
@@ -90,7 +95,7 @@ class PDModel(Model):
         #     }
         # )
 
-        self.data_collector.collect(self)
+        # self.data_collector.collect(self)
 
     def create_agent(self, type_str):
         if type_str == 'neural':
@@ -112,6 +117,8 @@ class PDModel(Model):
         self.num_simples = sum(1 for a in self.agents if isinstance(a, SimpleAgent))
         self.num_tit_for_tats = sum(1 for a in self.agents if isinstance(a, TitForTatAgent))
         self.num_neurals = sum(1 for a in self.agents if isinstance(a, NeuralAgent))
+        fs = [a.feature_vector().squeeze() for a in self.agents if isinstance(a, NeuralAgent)]
+        self.mean_feature_vector = np.mean(fs, axis=0)
 
     def substep(self):
         """
@@ -166,12 +173,10 @@ class PDModel(Model):
         self.grid = SingleGrid(width, height, torus=TORUS_GRID)
         self.schedule = SimultaneousActivation(self)
         self.current_id = 0
-        for x in range(width):
-            for y in range(height):
-                agent = children.pop(0)
-                agent.unique_id = self.next_id()
-                self.grid.place_agent(agent, (x, y))
-                self.schedule.add(agent)
+        for agent in children:
+            agent.unique_id = self.next_id()
+            self.grid.place_agent(agent, agent.pos)
+            self.schedule.add(agent)
 
         self.agents: List[PDAgent] = self.schedule.agents
         for agent in self.agents:
@@ -190,14 +195,10 @@ class PDModel(Model):
             self.substep()
         self.update_stats()
         self.data_collector.collect(self)
-        for agent in self.agents:
-            if isinstance(agent, NeuralAgent):
-                f = agent.feature_vector()
-                print(f[0], f[1])
 
         self.next_generation_local()
 
     def run(self, n):
         """Run the model for n steps (generations)"""
-        for _ in range(n):
+        for _ in tqdm(range(n)):
             self.step()

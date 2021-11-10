@@ -1,6 +1,6 @@
 from mesa import Agent
 
-from agent import PDAgent
+from lib.agent import PDAgent
 
 
 class SimpleAgent(PDAgent):

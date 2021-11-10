@@ -1,7 +1,7 @@
 from typing import List
 
-from agent import PDAgent
-from strategies import *
+from lib.agent import PDAgent
+from lib.strategies import *
 
 
 def cross(a: PDAgent, b: PDAgent):
@@ -10,9 +10,11 @@ def cross(a: PDAgent, b: PDAgent):
     c = mother.clone()
     c.inherited_attr = mother.inherited_attr
     # c.action = mother.action  # inherits memory
-    # c.pos = mother.pos  # localize
 
     if type(a) != type(b):  # e.g. a is tit-for-tat and b is neural
+        if isinstance(mother, NeuralAgent):
+            for wc, wm in zip(c.data(), mother.data()):  # copy weights
+                wc += wm
         return c
 
     # a b are the same type
@@ -21,10 +23,10 @@ def cross(a: PDAgent, b: PDAgent):
         b: NeuralAgent
         c: NeuralAgent
         mother: NeuralAgent
-        # for wc, wa, wb in zip(c.data(), a.data(), b.data()):
-        #     wc += wa if rng() < 0.5 else wb
-        for wc, wm in zip(c.data(), mother.data()):
-            wc += wm
+        for wc, wa, wb in zip(c.data(), a.data(), b.data()):
+            wc += wa if rng() < 0.5 else wb
+        # for wc, wm in zip(c.data(), mother.data()):
+        #     wc += wm
 
     return c
 
@@ -47,8 +49,8 @@ def evolute(population: List[PDAgent], fitness_function) -> List[PDAgent]:
 
 def evolute_local(population: List[PDAgent], fitness_function) -> List[PDAgent]:
     children = []
-    for a in population:
-        candidates = [a] + a.neighbors
+    for agent in population:
+        candidates = [agent] + agent.neighbors
         assert len(candidates) >= 2
         random = population[0].random
 
@@ -57,6 +59,7 @@ def evolute_local(population: List[PDAgent], fitness_function) -> List[PDAgent]:
         a, b = random.choices(candidates, weights, k=2)
         c = cross(a, b)
         c.mutate()
+        c.pos = agent.pos
         children.append(c)
 
     return children

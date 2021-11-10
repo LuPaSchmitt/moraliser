@@ -2,8 +2,8 @@ import numpy as np
 import scipy.special
 from mesa import Agent
 
-from agent import PDAgent
-from config import *
+from lib.agent import PDAgent
+from lib.config import *
 
 if NUMPY_SEED is not None:
     np.random.seed(NUMPY_SEED)
@@ -71,10 +71,10 @@ class NeuralAgent(PDAgent):
         :return: a 1x1 tensor in [0, 1], indicating the action tendency
         """
         x = self.wih1 @ inputs + self.b1
-        x = self.relu(x)
+        x = self.final_activation(x)
 
         x = self.wh1h2 @ x + self.b2
-        x = self.relu(x)
+        x = self.final_activation(x)
 
         x = self.wh2o @ x + self.bo
         x = self.final_activation(x)  # [0, 1]

@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from mesa import Agent
 
-from config import *
+from lib.config import *
 
 
 class PDAgent(Agent):
