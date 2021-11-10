@@ -8,6 +8,7 @@ def cross(a: PDAgent, b: PDAgent):
     rng = a.random.random
     mother = a if rng() < 0.5 else b
     c = mother.clone()
+    c.inherited_attr = mother.inherited_attr
     # c.action = mother.action  # inherits memory
     # c.pos = mother.pos  # localize
 

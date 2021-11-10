@@ -5,7 +5,7 @@ PAYOFF_MAP = [
     [5, 1],
 ]
 
-NEIGHBOR_TYPE = 4  # 8, 4, or 2
+NEIGHBOR_TYPE = 8  # 8, 4, or 2
 NEIGHBOR_RADIUS = 1
 
 NUM_SUBSTEPS = 10  # substeps in a generation
@@ -14,8 +14,8 @@ NUM_SUBSTEPS = 10  # substeps in a generation
 MUT_PROB = 0.0
 MUT_STRENGTH = 1.0
 
-DEFAULT_WIDTH = 4
-DEFAULT_HEIGHT = 4
+DEFAULT_WIDTH = 20
+DEFAULT_HEIGHT = 3
 TORUS_GRID = True
 CANVAS_DX = 30
 

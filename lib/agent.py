@@ -14,6 +14,7 @@ class PDAgent(Agent):
         """
         super().__init__(unique_id, model)
 
+        self.inherited_attr = None  # attribute that will inherit from the mother when reproducing
         self.score = 0  # total scores
         self.cur_score = 0
         self.neighbors = []

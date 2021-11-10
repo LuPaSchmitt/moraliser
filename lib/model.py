@@ -47,6 +47,7 @@ class PDModel(Model):
                     type_str = agent_type
 
                 agent = self.create_agent(type_str)
+                agent.inherited_attr = '#' + ''.join(self.random.choices('ABCDEF0123456789', k=6))
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
 
