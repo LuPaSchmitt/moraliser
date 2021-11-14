@@ -11,7 +11,7 @@ NEIGHBOR_RADIUS = 1
 NUM_SUBSTEPS = 10  # substeps in a generation
 
 # GA parameters
-MUT_PROB = 0.9
+MUT_PROB = 0.7
 MUT_STRENGTH = 1
 
 DEFAULT_WIDTH = 20
