@@ -55,7 +55,7 @@ def evolute_local(population: List[PDAgent], fitness_function) -> List[PDAgent]:
         else:
             candidates = [agent] + agent.neighbors
             candidates = [c for c in candidates if c.reproducable()]
-            assert len(candidates) >= 2
+            assert len(candidates) >= 2, f'Agent {agent} at {agent.pos} has too few reproducable neighbors'
             random = population[0].random
 
             weights = [fitness_function(n) for n in candidates]

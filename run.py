@@ -59,6 +59,7 @@ def plot_feat_vecs(data):
 m = PDModel(DEFAULT_WIDTH, DEFAULT_HEIGHT, seed=MESA_SEED, agent_type='mixed', agent_type_map=agent_type_map)
 generations = 100
 m.run(generations)
+m.dump(f'{folder}/model.pickle')
 plot_feature_map(m, generations)
 data = m.data_collector.get_model_vars_dataframe()
 plot_scores(data)

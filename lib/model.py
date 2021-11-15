@@ -1,18 +1,15 @@
-from typing import List
+import dill as pickle
 
+import numpy as np
 from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa.time import SimultaneousActivation
+from tqdm import tqdm
 
-import lib.config
-from lib.agent import PDAgent
 from lib.config import *
 from lib.genetic import *
 from lib.strategies import *
-import numpy as np
-
-from tqdm import tqdm
 
 
 class PDModel(Model):
@@ -210,3 +207,15 @@ class PDModel(Model):
         """Run the model for n steps (generations)"""
         for _ in tqdm(range(n)):
             self.step()
+
+    def dump(self, path):
+        """
+        Save the model and its data_collector to path
+        """
+        with open(path, 'wb') as f:
+            pickle.dump(self, f)
+
+
+def load_model(path) -> PDModel:
+    with open(path, 'rb') as f:
+        return pickle.load(f)
