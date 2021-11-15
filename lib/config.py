@@ -14,8 +14,8 @@ NUM_SUBSTEPS = 10  # substeps in a generation
 MUT_PROB = 0.7
 MUT_STRENGTH = 1
 
-DEFAULT_WIDTH = 20
-DEFAULT_HEIGHT = 20
+DEFAULT_WIDTH = 10
+DEFAULT_HEIGHT = 10
 TORUS_GRID = False
 CANVAS_DX = 30
 
@@ -23,3 +23,21 @@ MESA_SEED = 3
 NUMPY_SEED = 3
 
 VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio'
+
+
+def config_to_str():
+    return '\n'.join([
+        f"{PAYOFF_MAP=}",
+        f"{NEIGHBOR_TYPE=}",
+        f"{NEIGHBOR_RADIUS=}",
+        f"{NUM_SUBSTEPS=}",
+        f"{MUT_PROB=}",
+        f"{MUT_STRENGTH=}",
+        f"{DEFAULT_WIDTH=}",
+        f"{DEFAULT_HEIGHT=}",
+        f"{TORUS_GRID=}",
+        f"{CANVAS_DX=}",
+        f"{MESA_SEED=}",
+        f"{NUMPY_SEED=}",
+        f"{VISUALIZE_GRID_TYPE=}",
+    ])
