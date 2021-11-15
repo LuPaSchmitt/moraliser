@@ -13,20 +13,14 @@ with open(f'{folder}/config.txt', 'w') as f:
     f.write(config_to_str())
 
 
-def agent_type_map(x, y):
-    if x in [0, 2, 4, 6, 8]:
-        return 'tit_for_tat'
-    return 'neural'
-
-
 def plot_feature_map(m, i):
-    feature_map0 = np.zeros((m.grid.width, m.grid.height))
-    feature_map1 = np.zeros((m.grid.width, m.grid.height))
+    feature_map0 = np.zeros((m.grid.height, m.grid.width))
+    feature_map1 = np.zeros((m.grid.height, m.grid.width))
     for cell in m.grid.coord_iter():
         agent, x, y = cell
         if isinstance(agent, NeuralAgent):
-            feature_map0[x][y] = agent.feature_vector()[0]
-            feature_map1[x][y] = agent.feature_vector()[1]
+            feature_map0[y][x] = agent.feature_vector()[0]
+            feature_map1[y][y] = agent.feature_vector()[1]
     plt.clf()
     plt.imshow(feature_map0, interpolation='nearest')
     plt.colorbar()
@@ -56,8 +50,14 @@ def plot_feat_vecs(data):
     plt.savefig(f'{folder}/feat_vec.png')
 
 
+def agent_type_map(x, y):
+    if x in [0, 2, 4, 6, 8]:
+        return 'tit_for_tat'
+    return 'neural'
+
+
 m = PDModel(DEFAULT_WIDTH, DEFAULT_HEIGHT, seed=MESA_SEED, agent_type='mixed', agent_type_map=agent_type_map)
-generations = 100
+generations = 10
 m.run(generations)
 m.dump(f'{folder}/model.pickle')
 plot_feature_map(m, generations)

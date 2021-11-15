@@ -99,9 +99,9 @@ class NeuralAgent(PDAgent):
         self.other_prev_actions = {other.unique_id: other.action[self.unique_id] for other in self.neighbors}
 
     def feature_vector(self):
-        '''
+        """
         Given 0 or 1 as input, return the two outputs of the network
-        '''
+        """
         inputs = np.array([[0], [1]])
         return np.array([self.forward(x) for x in inputs])
 

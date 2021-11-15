@@ -6,6 +6,7 @@ from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa.time import SimultaneousActivation
 from tqdm import tqdm
+import copy
 
 from lib.config import *
 from lib.genetic import *
@@ -58,6 +59,8 @@ class PDModel(Model):
         self.agents: List[PDAgent] = self.schedule.agents
         for agent in self.agents:
             agent.initialize(self.neighbor_type, 0)
+
+        self.initial_agents = copy.deepcopy(self.agents)
 
         # Statistics
         self.total_scores = 0
