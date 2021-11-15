@@ -19,8 +19,9 @@ def plot_feature_map(m, i):
     for cell in m.grid.coord_iter():
         agent, x, y = cell
         if isinstance(agent, NeuralAgent):
-            feature_map0[y][x] = agent.feature_vector()[0]
-            feature_map1[y][y] = agent.feature_vector()[1]
+            v = agent.feature_vector()
+            feature_map0[y, x] = v[0]
+            feature_map1[y, x] = v[1]
     plt.clf()
     plt.imshow(feature_map0, interpolation='nearest')
     plt.colorbar()
@@ -29,6 +30,23 @@ def plot_feature_map(m, i):
     plt.imshow(feature_map1, interpolation='nearest')
     plt.colorbar()
     plt.savefig(f'{folder}/{i}_feature_map1.png')
+
+
+def plot_agent_type_map(m, i):
+    im = np.zeros((m.grid.height, m.grid.width, 3), dtype=int)
+    cmap = {
+        SimpleAgent: [0, 0, 255],
+        TitForTatAgent: [235, 155, 52],  # Orange
+        GoodAgent: [0, 255, 0],
+        BadAgent: [255, 0, 0],
+        NeuralAgent: [237, 14, 233],  # Pink
+    }
+    for cell in m.grid.coord_iter():
+        agent, x, y = cell
+        im[y, x, :] = cmap[type(agent)]
+    plt.clf()
+    plt.imshow(im, interpolation='nearest')
+    plt.savefig(f'{folder}/{i}_agent_type.png')
 
 
 def plot_scores(data):
@@ -51,16 +69,17 @@ def plot_feat_vecs(data):
 
 
 def agent_type_map(x, y):
-    if x in [0, 2, 4, 6, 8]:
+    if x in [0, DEFAULT_WIDTH - 1]:
         return 'tit_for_tat'
     return 'neural'
 
 
 m = PDModel(DEFAULT_WIDTH, DEFAULT_HEIGHT, seed=MESA_SEED, agent_type='mixed', agent_type_map=agent_type_map)
-generations = 10
+generations = 5000
 m.run(generations)
 m.dump(f'{folder}/model.pickle')
 plot_feature_map(m, generations)
+plot_agent_type_map(m, generations)
 data = m.data_collector.get_model_vars_dataframe()
 plot_scores(data)
 plot_feat_vecs(data)
