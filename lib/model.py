@@ -6,7 +6,6 @@ from mesa.datacollection import DataCollector
 from mesa.space import SingleGrid
 from mesa.time import SimultaneousActivation
 from tqdm import tqdm
-import copy
 
 from lib.config import *
 from lib.genetic import *
@@ -60,7 +59,7 @@ class PDModel(Model):
         for agent in self.agents:
             agent.initialize(self.neighbor_type, 0)
 
-        self.initial_agents = copy.deepcopy(self.agents)
+        self.initial_agents_types = [type(agent) for agent in self.agents]
 
         # Statistics
         self.total_scores = 0
@@ -206,10 +205,12 @@ class PDModel(Model):
 
         self.next_generation_local()
 
-    def run(self, n):
-        """Run the model for n steps (generations)"""
-        for _ in tqdm(range(n)):
+    def run(self, num_generations, callback=None):
+        """Run the model for many generations"""
+        for i in tqdm(range(num_generations)):
             self.step()
+            if callback is not None:
+                callback(i)
 
     def dump(self, path):
         """
