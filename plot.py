@@ -1,32 +1,30 @@
-import numpy as np
 from matplotlib import pyplot as plt
+
 from lib.model import *
 
-# start = 4400
-# end = 4800
+
+def plot_attr_map(m, i, folder, output_name, agent_attr, im_channels=1, im_dtype=float, cmap=None):
+    im = np.zeros((m.grid.height, m.grid.width, im_channels), dtype=im_dtype)
+    for cell in m.grid.coord_iter():
+        agent, x, y = cell
+        attr = agent_attr(agent)
+        im[y, x, :] = cmap[attr] if cmap is not None else attr
+    plt.clf()
+    plt.imshow(im, interpolation='nearest')
+    if cmap is None: plt.colorbar()
+    plt.savefig(f'{folder}/{i}_{output_name}.png')
+
+
+def plot_defecting_ratio_map(m, i, folder):
+    plot_attr_map(m, i, folder, 'defecting_ratio_map', lambda a: a.defecting_ratio)
 
 
 def plot_feature_map(m, i, folder):
-    feature_map0 = np.zeros((m.grid.height, m.grid.width))
-    feature_map1 = np.zeros((m.grid.height, m.grid.width))
-    for cell in m.grid.coord_iter():
-        agent, x, y = cell
-        if isinstance(agent, NeuralAgent):
-            v = agent.feature_vector()
-            feature_map0[y, x] = v[0]
-            feature_map1[y, x] = v[1]
-    plt.clf()
-    plt.imshow(feature_map0, interpolation='nearest')
-    plt.colorbar()
-    plt.savefig(f'{folder}/{i}_feature_map0.png')
-    # plt.clf()
-    # plt.imshow(feature_map1, interpolation='nearest')
-    # plt.colorbar()
-    # plt.savefig(f'{folder}/{i}_feature_map1.png')
+    plot_attr_map(m, i, folder, 'feature_map0', lambda a: a.feature_vector()[0] if isinstance(a, NeuralAgent) else 0)
+    plot_attr_map(m, i, folder, 'feature_map1', lambda a: a.feature_vector()[1] if isinstance(a, NeuralAgent) else 0)
 
 
 def plot_agent_type_map(m, i, folder):
-    im = np.zeros((m.grid.height, m.grid.width, 3), dtype=int)
     cmap = {
         SimpleAgent: [0, 0, 255],
         TitForTatAgent: [235, 155, 52],  # Orange
@@ -34,12 +32,7 @@ def plot_agent_type_map(m, i, folder):
         BadAgent: [255, 0, 0],
         NeuralAgent: [237, 14, 233],  # Pink
     }
-    for cell in m.grid.coord_iter():
-        agent, x, y = cell
-        im[y, x, :] = cmap[type(agent)]
-    plt.clf()
-    plt.imshow(im, interpolation='nearest')
-    plt.savefig(f'{folder}/{i}_agent_type.png')
+    plot_attr_map(m, i, folder, 'agent_type_map', type, 3, int, cmap)
 
 
 def plot_scores(data, folder, start=0, end=None):
