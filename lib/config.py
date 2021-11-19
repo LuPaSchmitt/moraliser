@@ -5,7 +5,7 @@ PAYOFF_MAP = [
     [5, 1],
 ]
 
-NEIGHBOR_TYPE = 2  # 8, 4, or 2
+NEIGHBOR_TYPE = 8  # 8, 4, or 2
 NEIGHBOR_RADIUS = 1
 
 NUM_SUBSTEPS = 10  # substeps in a generation
@@ -15,11 +15,11 @@ MUT_PROB = 0.7
 MUT_STRENGTH = 1
 
 DEFAULT_WIDTH = 10
-DEFAULT_HEIGHT = 1
+DEFAULT_HEIGHT = 10
 TORUS_GRID = False
 CANVAS_DX = 30
 
-MESA_SEED = 1
+MESA_SEED = 2
 NUMPY_SEED = 3
 
 VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio'

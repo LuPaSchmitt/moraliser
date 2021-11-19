@@ -15,7 +15,7 @@ with open(f'{folder}/config.txt', 'w') as f:
 
 
 def agent_type_map(x, y):
-    if x in [0, DEFAULT_WIDTH - 1]:
+    if ((x == 3 or x == 7) and 3 <= y <= 7) or ((y == 3 or y == 7) and 3 <= x <= 7):
         return 'tit_for_tat'
     return 'neural'
 
@@ -31,13 +31,17 @@ def make_callback(m, period, offset):
 
 m = PDModel(DEFAULT_WIDTH, DEFAULT_HEIGHT, seed=MESA_SEED, agent_type_map=agent_type_map)
 if not details:
-    m.run(5000)
+    plot_agent_type_map(m, 0, f"{folder}/maps")
+    m.run(1000, make_callback(m, 10, 0))
     m.dump(f'{folder}/model.pickle')
+    data = m.data_collector.get_model_vars_dataframe()
+    plot_scores(data, folder)
+    plot_feat_vecs(data, folder)
 else:
     m.run(1000)
     m.run(1200 - 1000, make_callback(m, 10, 1000))
     m.dump(f'{folder}/{1200}_model.pickle')
     m.run(1600 - 1200, make_callback(m, 10, 1200))
-data = m.data_collector.get_model_vars_dataframe()
-plot_scores(data, folder, 1000, 1600)
-plot_feat_vecs(data, folder, 1000, 1600)
+    data = m.data_collector.get_model_vars_dataframe()
+    plot_scores(data, folder, 1000, 1600)
+    plot_feat_vecs(data, folder, 1000, 1600)

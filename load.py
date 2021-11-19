@@ -4,10 +4,11 @@ from lib import model
 from plot import *
 from datetime import datetime
 
-in_folder = f"out/15_11_2021_22:17"
+in_folder = f"out/17_11_2021_11:49"
 assert exists(in_folder)
-out_folder = f"{in_folder}_detail"
-makedirs(out_folder)
+out_folder = in_folder
+# out_folder = f"{in_folder}_detail"
+# makedirs(out_folder)
 
 m = model.load_model(f'{in_folder}/model.pickle')
 
