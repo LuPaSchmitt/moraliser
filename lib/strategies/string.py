@@ -155,5 +155,6 @@ if __name__ == '__main__':
             assert a.current_states[b.unique_id] == a_states[i], i
             assert b.current_states[a.unique_id] == b_states[i], i
 
+
     test1()
     test2()

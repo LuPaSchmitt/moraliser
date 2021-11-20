@@ -11,6 +11,7 @@ NEIGHBOR_RADIUS = 1
 NUM_SUBSTEPS = 10  # substeps in a generation
 
 # GA parameters
+FITNESS_MULTIPLIER = 2  # parameter used for scaling fitness function, see P15 of the java manual
 MUT_PROB = 0.1
 MUT_STRENGTH = 1
 
@@ -33,6 +34,7 @@ def config_to_str():
         f"{NEIGHBOR_TYPE=}",
         f"{NEIGHBOR_RADIUS=}",
         f"{NUM_SUBSTEPS=}",
+        f"{FITNESS_MULTIPLIER=}",
         f"{MUT_PROB=}",
         f"{MEM_LEN=}",
         f"{MUT_STRENGTH=}",

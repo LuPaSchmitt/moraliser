@@ -11,6 +11,8 @@ from lib.config import *
 from lib.genetic import *
 from lib.strategies import *
 
+from typing import Callable
+
 
 class PDModel(Model):
     """Model class for iterated, spatial prisoner's dilemma model."""
@@ -31,11 +33,11 @@ class PDModel(Model):
         self.neighbor_type = neighbor_type
 
         if fitness_type == 'score':
-            self.fitness_function = lambda a: a.score
+            self.raw_fitness = lambda a: a.score
         elif fitness_type == 'cooperating_ratio':
-            self.fitness_function = lambda a: a.cooperating_ratio
+            self.raw_fitness = lambda a: a.cooperating_ratio
         elif fitness_type == 'defecting_ratio':
-            self.fitness_function = lambda a: a.defecting_ratio
+            self.raw_fitness = lambda a: a.defecting_ratio
         else:
             raise ValueError(f'Unknown fitness type {fitness_type}')
 
@@ -147,11 +149,25 @@ class PDModel(Model):
 
         # self.substep_data_collector.collect(self)
 
+    def get_scaled_fitness(self) -> Callable:
+        """
+        Fitness scaling is used to avoid the situations where the most fitted agent has overwhelming advantage over average agents,
+            or where the agents have too evenly distributed fitness.
+            In such situations, genetic algorithm cannot effectively find the global maximal or is easily stuck in local maxima.
+        Return the scaled fitness function, which maps the max fitness to FITNESS_MULTIPLIER times avg fitness
+        see java manual P15 for more details
+        """
+        f_max = max(self.raw_fitness(a) for a in self.agents)
+        f_avg = sum(self.raw_fitness(a) for a in self.agents) / len(self.agents)
+        a = (FITNESS_MULTIPLIER - 1) * f_avg / (f_max - f_avg)
+        b = f_avg * (f_max - FITNESS_MULTIPLIER * f_avg) / (f_max - f_avg)
+        return lambda agent: a * self.raw_fitness(agent) + b
+
     def next_generation(self):
         """
         Apply genetic algorithm to select dominant agents
         """
-        children = evolute(self.agents, self.fitness_function)
+        children = evolute(self.agents, self.get_scaled_fitness())
 
         # Recreate agents
         width, height = self.grid.width, self.grid.height
@@ -175,7 +191,7 @@ class PDModel(Model):
         """
         Apply genetic algorithm to select dominant agents
         """
-        children = evolute_local(self.agents, self.fitness_function)
+        children = evolute_local(self.agents, self.get_scaled_fitness())
 
         # Recreate agents
         width, height = self.grid.width, self.grid.height
