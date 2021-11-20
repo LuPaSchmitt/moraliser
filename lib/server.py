@@ -1,12 +1,12 @@
-from mesa.visualization.ModularVisualization import ModularServer, VisualizationElement
-from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
-from mesa.visualization.UserParam import UserSettableParameter
-
-from draw import draw_agent
-from model import PDModel
-from config import *
 import numpy as np
+from mesa.visualization.ModularVisualization import ModularServer, VisualizationElement
+from mesa.visualization.UserParam import UserSettableParameter
+from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
+
+from lib.config import *
+from lib.draw import draw_agent
 from lib.strategies import StringAgent
+from lib.model import PDModel
 
 
 def agent_type_map(x, y):
@@ -115,6 +115,3 @@ if NUMPY_SEED is not None:
     np.random.seed(NUMPY_SEED)
 
 server = ModularServer(PDModel, [canvas_element, pd_elem, agent_stat_chart, score_chart], "Evolution of Prisoner's Dilemma", model_params)
-
-if __name__ == '__main__':
-    server.launch(port=8080, open_browser=True)

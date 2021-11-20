@@ -1,9 +1,9 @@
 from abc import abstractmethod
+from typing import List, Dict
 
 from mesa import Agent
 
 from lib.config import *
-from typing import List, Dict
 
 
 class PDAgent(Agent):

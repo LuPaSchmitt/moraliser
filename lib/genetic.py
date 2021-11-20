@@ -1,7 +1,6 @@
 from typing import List
 
 from lib.agent import PDAgent
-from lib.strategies import *
 
 
 def evolute(population: List[PDAgent]) -> List[PDAgent]:

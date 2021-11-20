@@ -1,5 +1,6 @@
-import dill as pickle
+from typing import Callable
 
+import dill as pickle
 import numpy as np
 from mesa import Model
 from mesa.datacollection import DataCollector
@@ -10,8 +11,6 @@ from tqdm import tqdm
 from lib.config import *
 from lib.genetic import *
 from lib.strategies import *
-
-from typing import Callable
 
 
 class PDModel(Model):

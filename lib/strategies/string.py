@@ -1,11 +1,11 @@
-from mesa import Agent
-
-from lib.agent import PDAgent
 from collections import deque
 from typing import Dict
 
-from lib.config import *
 import numpy as np
+from mesa import Agent
+
+from lib.agent import PDAgent
+from lib.config import *
 
 
 class StringAgent(PDAgent):
