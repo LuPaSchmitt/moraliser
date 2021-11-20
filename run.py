@@ -29,6 +29,9 @@ def make_callback(m, period, offset):
     return callback
 
 
+if NUMPY_SEED is not None:
+    np.random.seed(NUMPY_SEED)
+
 m = PDModel(DEFAULT_WIDTH, DEFAULT_HEIGHT, seed=MESA_SEED, agent_type_map=agent_type_map)
 if not details:
     plot_agent_type_map(m, 0, f"{folder}/maps")

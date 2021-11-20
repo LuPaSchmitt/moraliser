@@ -3,6 +3,7 @@ from abc import abstractmethod
 from mesa import Agent
 
 from lib.config import *
+from typing import List, Dict
 
 
 class PDAgent(Agent):
@@ -17,9 +18,10 @@ class PDAgent(Agent):
         self.inherited_attr = None  # attribute that will inherit from the mother when reproducing
         self.score = 0  # total scores
         self.cur_score = 0
-        self.neighbors = []
-        self.action = {}  # current action, maps other agent's id to my action with it
-        self.next_action = {}  # for advancing
+        self.neighbors: List[PDAgent] = []
+        self.action: Dict[int, int] = {}  # current action, maps other agent's id to my action with it
+        self.next_action: Dict[int, int] = {}  # for advancing
+        self.fitness = 0
         # TODO: more efficient implementation of action table, currently the dictionary lookup takes too much time
 
     def initialize(self, neighbor_type, starting_action=None):
@@ -63,6 +65,12 @@ class PDAgent(Agent):
         Is the agent able to participate in the 'cross' process in GA
         """
         pass
+
+    def cross(self, other: Agent):
+        """
+        Reproduce with another agent to get two children
+        """
+        assert self.reproducable()
 
     def mutate(self):
         """

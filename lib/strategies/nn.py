@@ -5,9 +5,6 @@ from mesa import Agent
 from lib.agent import PDAgent
 from lib.config import *
 
-if NUMPY_SEED is not None:
-    np.random.seed(NUMPY_SEED)
-
 
 class NeuralAgent(PDAgent):
     def __init__(self, unique_id, model, stochastic=False, mut_prob=MUT_PROB, mut_strength=MUT_STRENGTH):
@@ -115,3 +112,16 @@ class NeuralAgent(PDAgent):
         yield self.b2
         yield self.wh2o
         yield self.bo
+
+    def cross(self, other: PDAgent):
+        assert type(self) == type(other), f"{type(self)} cannot cross with {type(self)} agent"
+        c1, c2 = self.clone(), other.clone()
+        c1.inherited_attr, c2.inherited_attr = self.inherited_attr, other.inherited_attr
+        for w1, w2, ws, wo in zip(c1.data(), c2.data(), self.data(), other.data()):  # copy weights
+            if np.random.random() < 0.5:
+                w1 += ws
+                w2 += wo
+            else:
+                w1 += wo
+                w2 += ws
+        return c1, c2

@@ -104,6 +104,8 @@ class PDModel(Model):
         if type_str == 'neural':
             agent = NeuralAgent(self.next_id(), self, stochastic=True)
             agent.random_weights()
+        elif type_str == 'string':
+            agent = StringAgent(self.next_id(), self)
         elif type_str == 'tit_for_tat':
             agent = TitForTatAgent(self.next_id(), self)
         elif type_str == 'simple':

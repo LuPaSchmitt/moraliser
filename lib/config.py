@@ -11,8 +11,10 @@ NEIGHBOR_RADIUS = 1
 NUM_SUBSTEPS = 10  # substeps in a generation
 
 # GA parameters
-MUT_PROB = 0.7
+MUT_PROB = 0.1
 MUT_STRENGTH = 1
+
+MEM_LEN = 3
 
 DEFAULT_WIDTH = 10
 DEFAULT_HEIGHT = 10
@@ -32,6 +34,7 @@ def config_to_str():
         f"{NEIGHBOR_RADIUS=}",
         f"{NUM_SUBSTEPS=}",
         f"{MUT_PROB=}",
+        f"{MEM_LEN=}",
         f"{MUT_STRENGTH=}",
         f"{DEFAULT_WIDTH=}",
         f"{DEFAULT_HEIGHT=}",
