@@ -38,10 +38,12 @@ class StringAgent(PDAgent):
     def clone(self):
         return StringAgent(self.unique_id, self.model, self.mem_len)
 
+    def random_chromosome(self):
+        self.chromosome = self.random.choices([0, 1], k=len(self.chromosome))
+
     def initialize(self, neighbor_type, starting_action=None):
-        if starting_action is None:
-            starting_action = self.random.choice([0, 1])
-            self.chromosome[0] = starting_action
+        if starting_action is None:  # not random anymore
+            starting_action = self.chromosome[0]
         super().initialize(neighbor_type, starting_action)
         self.prev_actions = {other.unique_id: deque(maxlen=self.mem_len) for other in self.neighbors}
         self.current_states = {other.unique_id: 0 for other in self.neighbors}
@@ -80,7 +82,8 @@ class StringAgent(PDAgent):
         assert type(self) == type(other), f"{type(self)} cannot cross with {type(self)} agent"
         assert len(self.chromosome) == len(other.chromosome)
         c1, c2 = self.clone(), other.clone()
-        c1.inherited_attr, c2.inherited_attr = self.inherited_attr, other.inherited_attr
+        c1.inherited_attr = self.inherited_attr
+        c2.inherited_attr = other.inherited_attr
         position = np.random.randint(0, len(self.chromosome))
         c1.chromosome[:position] = self.chromosome[:position]
         c1.chromosome[position:] = other.chromosome[position:]
@@ -88,6 +91,10 @@ class StringAgent(PDAgent):
         c2.chromosome[position:] = self.chromosome[position:]
 
         return c1, c2
+
+    @property
+    def defecting_ratio(self):
+        return sum(self.chromosome) / len(self.chromosome)
 
 
 if __name__ == '__main__':

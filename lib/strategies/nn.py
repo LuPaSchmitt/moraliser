@@ -116,7 +116,8 @@ class NeuralAgent(PDAgent):
     def cross(self, other: PDAgent):
         assert type(self) == type(other), f"{type(self)} cannot cross with {type(self)} agent"
         c1, c2 = self.clone(), other.clone()
-        c1.inherited_attr, c2.inherited_attr = self.inherited_attr, other.inherited_attr
+        c1.inherited_attr = self.inherited_attr
+        c2.inherited_attr = other.inherited_attr
         for w1, w2, ws, wo in zip(c1.data(), c2.data(), self.data(), other.data()):  # copy weights
             if np.random.random() < 0.5:
                 w1 += ws

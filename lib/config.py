@@ -11,21 +11,23 @@ NEIGHBOR_RADIUS = 1
 NUM_SUBSTEPS = 10  # substeps in a generation
 
 # GA parameters
+USE_LOCAL_GA = False  # weather to use the localized version of GA
 FITNESS_MULTIPLIER = 2  # parameter used for scaling fitness function, see P15 of the java manual
-MUT_PROB = 0.1
+EPS = 1e-3
+MUT_PROB = 0.0
 MUT_STRENGTH = 1
 
 MEM_LEN = 3
 
 DEFAULT_WIDTH = 10
 DEFAULT_HEIGHT = 10
-TORUS_GRID = False
+TORUS_GRID = True
 CANVAS_DX = 30
 
 MESA_SEED = 2
 NUMPY_SEED = 3
 
-VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio'
+VISUALIZE_GRID_TYPE = 'inherited_attr'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'
 
 
 def config_to_str():

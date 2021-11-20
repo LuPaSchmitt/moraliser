@@ -29,6 +29,7 @@ class PDAgent(Agent):
         Called before model runs
         """
         self.score = 0
+        self.fitness = 0
         # Assuming that neighbors don't change throughout the game
         if neighbor_type == 8:
             self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False, radius=NEIGHBOR_RADIUS)
@@ -71,6 +72,7 @@ class PDAgent(Agent):
         Reproduce with another agent to get two children
         """
         assert self.reproducable()
+        raise NotImplementedError(f'cross function for {type(self)} is not implemented!')
 
     def mutate(self):
         """

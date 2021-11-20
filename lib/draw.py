@@ -1,9 +1,9 @@
 import matplotlib as matplotlib
 import matplotlib.cm as cm
 
-from agent import PDAgent
-from config import VISUALIZE_GRID_TYPE
-from strategies import *
+from lib.agent import PDAgent
+from lib.config import VISUALIZE_GRID_TYPE
+from lib.strategies import *
 
 
 def color_map(value, cmap_name='cool', vmin=0, vmax=1):
@@ -22,10 +22,10 @@ def draw_agent(agent: PDAgent):
     :param agent:  the agent in the simulation
     :return: the portrayal dictionary
     """
-    if agent.model.max_score <= 0 or agent.score <= 0:
+    if agent.model.f_max <= 0 or agent.fitness <= 0:
         r = 0.8
     else:
-        r = agent.score / agent.model.max_score
+        r = agent.fitness / agent.model.f_max
 
     if VISUALIZE_GRID_TYPE == 'defecting_ratio':
         color = color_map(agent.defecting_ratio)
@@ -44,6 +44,8 @@ def draw_agent(agent: PDAgent):
             # color = agent.inherited_attr
         else:
             color = 'Black'
+    elif VISUALIZE_GRID_TYPE == 'inherited_attr':
+        color = agent.inherited_attr
     else:
         color = 'Black'
 

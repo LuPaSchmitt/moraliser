@@ -6,6 +6,7 @@ from draw import draw_agent
 from model import PDModel
 from config import *
 import numpy as np
+from lib.strategies import StringAgent
 
 
 def agent_type_map(x, y):
@@ -20,7 +21,7 @@ model_params = {
     "width": 10,
     "height": 10,
     "seed": MESA_SEED,
-    "agent_type_map": agent_type_map,
+    # "agent_type_map": agent_type_map,
     "num_substeps": UserSettableParameter(
         "slider",
         "Number of steps in each generation",
@@ -37,8 +38,8 @@ model_params = {
     "agent_type": UserSettableParameter(
         "choice",
         "Agent type",
-        value="neural",
-        choices=['neural', 'tit_for_tat', 'simple', 'mixed'],
+        value="string",
+        choices=['neural', 'string', 'tit_for_tat', 'simple', 'mixed'],
     ),
     "neighbor_type": UserSettableParameter(
         "choice",
@@ -86,13 +87,16 @@ class PDElement(TextElement):
         pass
 
     def render(self, model: PDModel):
-        return f"Generation: {model.generations} Cooperating agents: {model.num_cooperating_agents / len(model.agents) * 100:.2f}%"
+        fittest = max(model.agents, key=lambda a: a.fitness)
+        appendix = ''
+        if isinstance(fittest, StringAgent):
+            appendix = ' Fittest chromosome: ' + ''.join(map(str, fittest.chromosome))
+        return f"Generation: {model.generations}" + appendix
 
 
 pd_elem = PDElement()
 score_chart = ChartModule([
     # {"Label": "Cooperating_Agents", "Color": "Blue"},
-    # {"Label": "Total_Scores", "Color": "Black"},
     {"Label": "Mean_Score", "Color": "Orange"},
     {"Label": "Max_Score", "Color": "Red"},
     {"Label": "Min_Score", "Color": "Green"},
@@ -107,7 +111,10 @@ agent_stat_chart = ChartModule([
 
 hist_elem = HistogramModule(200, 500)
 
-server = ModularServer(PDModel, [canvas_element, pd_elem, agent_stat_chart, score_chart, hist_elem], "Evolution of Prisoner's Dilemma", model_params)
+if NUMPY_SEED is not None:
+    np.random.seed(NUMPY_SEED)
+
+server = ModularServer(PDModel, [canvas_element, pd_elem, agent_stat_chart, score_chart], "Evolution of Prisoner's Dilemma", model_params)
 
 if __name__ == '__main__':
     server.launch(port=8080, open_browser=True)
