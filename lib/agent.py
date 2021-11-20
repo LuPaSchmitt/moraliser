@@ -22,6 +22,7 @@ class PDAgent(Agent):
         self.action: Dict[int, int] = {}  # current action, maps other agent's id to my action with it
         self.next_action: Dict[int, int] = {}  # for advancing
         self.fitness = 0
+        self.action_history = []  # keep track of all actions this agent made to measure its defecting_ratio
         # TODO: more efficient implementation of action table, currently the dictionary lookup takes too much time
 
     def initialize(self, neighbor_type, starting_action=None):
@@ -30,6 +31,7 @@ class PDAgent(Agent):
         """
         self.score = 0
         self.fitness = 0
+        self.action_history = []
         # Assuming that neighbors don't change throughout the game
         if neighbor_type == 8:
             self.neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False, radius=NEIGHBOR_RADIUS)
@@ -83,7 +85,9 @@ class PDAgent(Agent):
 
     @property
     def defecting_ratio(self):
-        return sum(self.action.values()) / len(self.neighbors)
+        if len(self.action_history) == 0:
+            return 0
+        return sum(self.action_history) / len(self.action_history)
 
     @property
     def cooperating_ratio(self):
@@ -112,7 +116,9 @@ class PDAgent(Agent):
         """
         self.next_action = {}
         for other in self.neighbors:
-            self.next_action[other.unique_id] = self.make_action(other)
+            action = self.make_action(other)
+            self.next_action[other.unique_id] = action
+            self.action_history.append(action)
 
     def advance(self):
         self.action = self.next_action

@@ -92,10 +92,6 @@ class StringAgent(PDAgent):
 
         return c1, c2
 
-    @property
-    def defecting_ratio(self):
-        return sum(self.chromosome) / len(self.chromosome)
-
 
 if __name__ == '__main__':
     from mesa import Model
