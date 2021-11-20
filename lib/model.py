@@ -40,7 +40,6 @@ class PDModel(Model):
             self.raw_fitness = lambda a: a.defecting_ratio
         else:
             raise ValueError(f'Unknown fitness type {fitness_type}')
-        self.scaled_fitness = None
 
         # Create agents
         for x in range(width):
@@ -174,15 +173,15 @@ class PDModel(Model):
         """
         Called before each evolution. Update the fitness field of all agents
         """
-        self.scaled_fitness = self.recompute_scaled_fitness()
+        f = self.recompute_scaled_fitness()
         for a in self.agents:
-            a.fitness = self.scaled_fitness(a)
+            a.fitness = f(a)
 
     def next_generation(self):
         """
         Apply genetic algorithm to select dominant agents
         """
-        children = evolute(self.agents, self.scaled_fitness)
+        children = evolute(self.agents)
 
         # Recreate agents
         width, height = self.grid.width, self.grid.height
@@ -206,7 +205,7 @@ class PDModel(Model):
         """
         Apply genetic algorithm to select dominant agents
         """
-        children = evolute_local(self.agents, self.scaled_fitness)
+        children = evolute_local(self.agents)
 
         # Recreate agents
         width, height = self.grid.width, self.grid.height

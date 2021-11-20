@@ -42,6 +42,8 @@ def draw_agent(agent: PDAgent):
             # color = 'Orange'
             color = color_map(agent.feature_vector()[0])
             # color = agent.inherited_attr
+        elif isinstance(agent, StringAgent):
+            color = color_map(agent.defecting_ratio)
         else:
             color = 'Black'
     elif VISUALIZE_GRID_TYPE == 'inherited_attr':
