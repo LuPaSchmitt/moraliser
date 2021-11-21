@@ -109,7 +109,7 @@ class PDModel(Model):
 
     def create_agent(self, type_str, params_dict):
         if type_str == 'neural':
-            agent = NeuralAgent(self.next_id(), self, stochastic=params_dict.get('stochastic', True))
+            agent = NeuralAgent(self.next_id(), self, stochastic=params_dict.get('stochastic', False))
             agent.random_weights()
         elif type_str == 'string':
             agent = StringAgent(self.next_id(), self)

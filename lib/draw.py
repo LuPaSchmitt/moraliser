@@ -40,7 +40,8 @@ def draw_agent(agent: PDAgent):
             color = 'Red'
         elif isinstance(agent, NeuralAgent):
             # color = 'Orange'
-            color = color_map(agent.feature_vector()[0])
+            f = agent.feature_vector()
+            color = f'rgba({int(f[0] * 255)}, {int(f[1] * 255)}, 0, 1)'
             # color = agent.inherited_attr
         elif isinstance(agent, StringAgent):
             color = color_map(agent.defecting_ratio)

@@ -27,7 +27,7 @@ CANVAS_DX = 30
 MESA_SEED = 3
 NUMPY_SEED = 3
 
-VISUALIZE_GRID_TYPE = 'defecting_ratio'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'
+VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'
 
 
 def config_to_str():

@@ -5,7 +5,7 @@ from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
 
 from lib.config import *
 from lib.draw import draw_agent
-from lib.strategies import StringAgent
+from lib.strategies import *
 from lib.model import PDModel
 
 
@@ -30,7 +30,7 @@ model_params = {
     "width": 10,
     "height": 9,
     "seed": MESA_SEED,
-    "agent_type_map": agent_type_map2,
+    # "agent_type_map": agent_type_map2,
     "num_substeps": UserSettableParameter(
         "slider",
         "Number of steps in each generation",
@@ -47,7 +47,7 @@ model_params = {
     "agent_type": UserSettableParameter(
         "choice",
         "Agent type",
-        value="string",
+        value="neural",
         choices=['neural', 'string', 'tit_for_tat', 'simple', 'mixed'],
     ),
     "neighbor_type": UserSettableParameter(
@@ -100,6 +100,9 @@ class PDElement(TextElement):
         appendix = ''
         if isinstance(fittest, StringAgent):
             appendix = ' Fittest chromosome: ' + fittest.chromosome_str()
+        if isinstance(fittest, NeuralAgent):
+            f = fittest.feature_vector()
+            appendix = f' Fittest feature vector: {f[0]:.4f}, {f[1]:.4f}'
         return f"Generation: {model.generations}" + appendix
 
 
