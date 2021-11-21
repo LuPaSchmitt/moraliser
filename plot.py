@@ -10,7 +10,7 @@ def plot_attr_map(m, i, folder, output_name, agent_attr, im_channels=1, im_dtype
         attr = agent_attr(agent)
         im[y, x, :] = cmap[attr] if cmap is not None else attr
     plt.clf()
-    plt.imshow(im, interpolation='nearest')
+    plt.imshow(im, vmin=0, vmax=1, interpolation='nearest')
     if cmap is None: plt.colorbar()
     plt.savefig(f'{folder}/{i}_{output_name}.png')
 
@@ -20,8 +20,26 @@ def plot_defecting_ratio_map(m, i, folder):
 
 
 def plot_feature_map(m, i, folder):
-    plot_attr_map(m, i, folder, 'feature_map0', lambda a: a.feature_vector()[0] if isinstance(a, NeuralAgent) else 0)
-    plot_attr_map(m, i, folder, 'feature_map1', lambda a: a.feature_vector()[1] if isinstance(a, NeuralAgent) else 0)
+    f0 = np.zeros((m.grid.height, m.grid.width), dtype=float)
+    f1 = np.zeros((m.grid.height, m.grid.width), dtype=float)
+    for cell in m.grid.coord_iter():
+        agent, x, y = cell
+        if isinstance(agent, NeuralAgent):
+            f = agent.feature_vector()
+            f0[y, x] = f[0]
+            f1[y, x] = f[1]
+    plt.clf()
+    plt.figure(figsize=(10, 5))
+    fig, (ax0, ax1) = plt.subplots(1, 2, gridspec_kw={'width_ratios': [4, 5]})
+    ax0.imshow(f0, vmin=0, vmax=1, interpolation='nearest')
+    img = ax1.imshow(f1, vmin=0, vmax=1, interpolation='nearest')
+    ax0.title.set_text('Feature Map 0')
+    ax1.title.set_text('Feature Map 1')
+    ax0.axis('off')
+    ax1.axis('off')
+    plt.colorbar(img, ax=ax1)
+    plt.savefig(f'{folder}/{i}_feature_map.png')
+    plt.close('all')
 
 
 def plot_agent_type_map(m, i, folder):

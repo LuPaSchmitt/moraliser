@@ -14,17 +14,17 @@ NUM_SUBSTEPS = 10  # substeps in a generation
 USE_LOCAL_GA = True  # weather to use the localized version of GA
 FITNESS_MULTIPLIER = 2  # parameter used for scaling fitness function, see P15 of the java manual
 EPS = 1e-3
-MUT_PROB = 0.1
+MUT_PROB = 0.7
 MUT_STRENGTH = 1
 
 MEM_LEN = 3
 
-DEFAULT_WIDTH = 10
-DEFAULT_HEIGHT = 10
-TORUS_GRID = True
+DEFAULT_WIDTH = 20
+DEFAULT_HEIGHT = 20
+TORUS_GRID = False
 CANVAS_DX = 30
 
-MESA_SEED = 2
+MESA_SEED = 3
 NUMPY_SEED = 3
 
 VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'

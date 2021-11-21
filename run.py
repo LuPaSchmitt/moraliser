@@ -32,11 +32,11 @@ def make_callback(m, period, offset):
 if NUMPY_SEED is not None:
     np.random.seed(NUMPY_SEED)
 
-m = PDModel(DEFAULT_WIDTH, DEFAULT_HEIGHT, seed=MESA_SEED, agent_type_map=agent_type_map)
+m = PDModel(DEFAULT_WIDTH, DEFAULT_HEIGHT, seed=MESA_SEED, agent_type='neural')
 if not details:
-    plot_agent_type_map(m, 0, f"{folder}/maps")
-    m.run(1000, make_callback(m, 10, 0))
-    m.dump(f'{folder}/model.pickle')
+    # plot_agent_type_map(m, 0, f"{folder}/maps")
+    m.run(12000, make_callback(m, 1, 0))
+    # m.dump(f'{folder}/model.pickle')
     data = m.data_collector.get_model_vars_dataframe()
     plot_scores(data, folder)
     plot_feat_vecs(data, folder)
