@@ -43,15 +43,20 @@ class PDModel(Model):
         # Create agents
         for x in range(width):
             for y in range(height):
+                params_dict = {}
                 if agent_type_map is not None:
-                    type_str = agent_type_map(x, y)
+                    packed = agent_type_map(x, y)
+                    if isinstance(packed, str):
+                        type_str = packed
+                    else:
+                        type_str, params_dict = packed
                 else:
                     if agent_type == 'mixed':
                         type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.6, 0.3, 0.1], k=1)[0]
                     else:
                         type_str = agent_type
 
-                agent = self.create_agent(type_str)
+                agent = self.create_agent(type_str, params_dict)
                 agent.inherited_attr = '#' + ''.join(self.random.choices('ABCDEF0123456789', k=6))
                 self.grid.place_agent(agent, (x, y))
                 self.schedule.add(agent)
@@ -102,13 +107,21 @@ class PDModel(Model):
 
         # self.data_collector.collect(self)
 
-    def create_agent(self, type_str):
+    def create_agent(self, type_str, params_dict):
         if type_str == 'neural':
-            agent = NeuralAgent(self.next_id(), self, stochastic=True)
+            agent = NeuralAgent(self.next_id(), self, stochastic=params_dict.get('stochastic', True))
             agent.random_weights()
         elif type_str == 'string':
             agent = StringAgent(self.next_id(), self)
             agent.random_chromosome()
+            if 'starting_action' in params_dict:
+                agent.chromosome[0] = params_dict['starting_action']
+        elif type_str == 'string_tit_for_tat':
+            agent = StringAgent.create_tit_for_tat(self.next_id(), self, starting_action=params_dict.get('starting_action', None))
+        elif type_str == 'string_always_cooperating':
+            agent = StringAgent.create_always_cooperating(self.next_id(), self)
+        elif type_str == 'string_always_defecting':
+            agent = StringAgent.create_always_defecting(self.next_id(), self)
         elif type_str == 'tit_for_tat':
             agent = TitForTatAgent(self.next_id(), self)
         elif type_str == 'simple':

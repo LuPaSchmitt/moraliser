@@ -57,6 +57,7 @@ def evolute_local(population: List[PDAgent]) -> List[PDAgent]:
             weakest = min(father.neighbors, key=lambda a: a.fitness)
             index = weakest.unique_id - 1
             child.pos = weakest.pos
+            child.mutate()
             population[index] = child
             weights[index] = 0
             father.neighbors.remove(weakest)

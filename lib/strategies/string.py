@@ -13,7 +13,7 @@ class StringAgent(PDAgent):
     String based strategy encoding, refer to https://github.com/aerrity/prisoners-dilemma manual section 4.2
     """
 
-    def __init__(self, unique_id, model, mem_len=MEM_LEN, mut_prob=MUT_PROB):
+    def __init__(self, unique_id, model, mem_len=MEM_LEN, mut_prob=MUT_PROB, chromosome=None, starting_action=None):
         super().__init__(unique_id, model)
         self.mem_len = mem_len  # Maximum memory length
         self.prev_actions: Dict[int, deque] = {}  # Map other's id to its previous action tuples
@@ -24,7 +24,15 @@ class StringAgent(PDAgent):
         self.init_move_bits = 2 ** mem_len - 1
         self.later_move_bits = 4 ** mem_len
         self.later_move_mask = self.later_move_bits - 1
-        self.chromosome = [0] * (self.init_move_bits + self.later_move_bits)
+        if chromosome is not None:
+            assert isinstance(chromosome, list)
+            assert len(chromosome) == self.init_move_bits + self.later_move_bits
+            self.chromosome = chromosome.copy()
+        else:
+            self.chromosome = [0] * (self.init_move_bits + self.later_move_bits)
+            if starting_action is not None:
+                assert starting_action in [0, 1]
+                self.chromosome[0] = starting_action
 
         # The agent behaves like an FSM. In each feedback it moves to a new state, and the action is made based on its instant state
         # current_state points to the current action index in the chromosome
@@ -74,9 +82,9 @@ class StringAgent(PDAgent):
             self.current_states[other.unique_id] = state
 
     def mutate(self):
-        if np.random.random() < self.mutate_probability:
-            position = np.random.randint(0, len(self.chromosome))
-            self.chromosome[position] ^= 1
+        for position in range(len(self.chromosome)):
+            if np.random.random() < self.mutate_probability:
+                self.chromosome[position] ^= 1
 
     def cross(self, other: PDAgent):
         assert type(self) == type(other), f"{type(self)} cannot cross with {type(self)} agent"
@@ -92,6 +100,34 @@ class StringAgent(PDAgent):
 
         return c1, c2
 
+    def chromosome_str(self):
+        s = ''.join(map(str, self.chromosome))
+        return s[:self.init_move_bits] + ' ' + s[self.init_move_bits:]
+
+    @staticmethod
+    def create_tit_for_tat(unique_id, model, mem_len=MEM_LEN, mut_prob=MUT_PROB, starting_action=None):
+        a = StringAgent(unique_id, model, mem_len, mut_prob)
+        if starting_action is not None:
+            assert starting_action in [0, 1]
+            a.chromosome[0] = starting_action
+        for i in range(1, a.init_move_bits):
+            a.chromosome[i] = int(not (i & 1))
+        for i in range(a.init_move_bits, a.init_move_bits + a.later_move_bits):
+            a.chromosome[i] = (i - a.init_move_bits) & 1
+        return a
+
+    @staticmethod
+    def create_always_cooperating(unique_id, model, mem_len=MEM_LEN, mut_prob=MUT_PROB):
+        a = StringAgent(unique_id, model, mem_len, mut_prob)
+        a.chromosome = [0] * len(a.chromosome)
+        return a
+
+    @staticmethod
+    def create_always_defecting(unique_id, model, mem_len=MEM_LEN, mut_prob=MUT_PROB):
+        a = StringAgent(unique_id, model, mem_len, mut_prob)
+        a.chromosome = [1] * len(a.chromosome)
+        return a
+
 
 if __name__ == '__main__':
     from mesa import Model
@@ -100,10 +136,10 @@ if __name__ == '__main__':
 
 
     def test1():
-        a = StringAgent(0, m, mem_len=1)
+        a = StringAgent.create_tit_for_tat(0, m, mem_len=1)
         b = StringAgent(1, m, mem_len=1)
         assert len(a.chromosome) == len(b.chromosome) == 5
-        a.chromosome = [int(c) for c in '00101']  # t4t
+        assert a.chromosome_str() == '0 0101'
         b.chromosome = [int(c) for c in '01111']  # bad
         a.neighbors = [b]
         b.neighbors = [a]
@@ -130,10 +166,10 @@ if __name__ == '__main__':
 
 
     def test2():
-        a = StringAgent(0, m, mem_len=2)
+        a = StringAgent.create_tit_for_tat(0, m, mem_len=2)
         b = StringAgent(1, m, mem_len=2)
         assert len(a.chromosome) == len(b.chromosome) == 19
-        a.chromosome = [int(c) for c in '0010101010101010101']  # t4t
+        assert a.chromosome_str() == '001 0101010101010101'  # t4t
         b.chromosome = [int(c) for c in '0001111111111111110']
         a.neighbors = [b]
         b.neighbors = [a]

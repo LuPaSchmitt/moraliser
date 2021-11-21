@@ -9,7 +9,7 @@ from lib.strategies import StringAgent
 from lib.model import PDModel
 
 
-def agent_type_map(x, y):
+def agent_type_map1(x, y):
     if x == 4 or x == 0:
         return 'tit_for_tat'
     if x == 5 or x == 9:
@@ -17,11 +17,20 @@ def agent_type_map(x, y):
     return 'string'
 
 
+def agent_type_map2(x, y):
+    return 'string', {'starting_action': 0}
+    # if (x, y) in [(3, 4), (4, 4), (5, 4), (6, 4)]:
+    #     # return 'string_tit_for_tat', {'starting_action': 0 if x < 3 else 1}
+    #     return 'string', {'starting_action': '0'}
+    # else:
+    #     return 'string', {'starting_action': '1'}
+
+
 model_params = {
     "width": 10,
-    "height": 10,
+    "height": 9,
     "seed": MESA_SEED,
-    "agent_type_map": agent_type_map,
+    "agent_type_map": agent_type_map2,
     "num_substeps": UserSettableParameter(
         "slider",
         "Number of steps in each generation",
@@ -90,7 +99,7 @@ class PDElement(TextElement):
         fittest = max(model.agents, key=lambda a: a.fitness)
         appendix = ''
         if isinstance(fittest, StringAgent):
-            appendix = ' Fittest chromosome: ' + ''.join(map(str, fittest.chromosome))
+            appendix = ' Fittest chromosome: ' + fittest.chromosome_str()
         return f"Generation: {model.generations}" + appendix
 
 

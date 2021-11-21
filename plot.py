@@ -28,6 +28,7 @@ def plot_feature_map(m, i, folder):
             f = agent.feature_vector()
             f0[y, x] = f[0]
             f1[y, x] = f[1]
+            print(f)
     plt.clf()
     plt.figure(figsize=(10, 5))
     fig, (ax0, ax1) = plt.subplots(1, 2, gridspec_kw={'width_ratios': [4, 5]})
