@@ -17,6 +17,7 @@ EPS = 1e-3
 MUT_PROB = 0.7
 MUT_STRENGTH = 10.
 
+DEFAULT_NEURAL_STRUCTURE = [6, 1]
 MEM_LEN = 3
 
 DEFAULT_WIDTH = 20
@@ -27,7 +28,7 @@ CANVAS_DX = 30
 MESA_SEED = 3
 NUMPY_SEED = 3
 
-VISUALIZE_GRID_TYPE = 'defecting_ratio'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'
+VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'
 
 
 def config_to_str():
@@ -38,6 +39,7 @@ def config_to_str():
         f"{NUM_SUBSTEPS=}",
         f"{FITNESS_MULTIPLIER=}",
         f"{MUT_PROB=}",
+        f"{DEFAULT_NEURAL_STRUCTURE=}",
         f"{MEM_LEN=}",
         f"{MUT_STRENGTH=}",
         f"{DEFAULT_WIDTH=}",

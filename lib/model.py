@@ -52,7 +52,7 @@ class PDModel(Model):
                         type_str, params_dict = packed
                 else:
                     if agent_type == 'mixed':
-                        type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.6, 0.3, 0.1], k=1)[0]
+                        type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.3, 0.3, 0.3], k=1)[0]
                     else:
                         type_str = agent_type
 

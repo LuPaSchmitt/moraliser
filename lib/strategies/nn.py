@@ -9,7 +9,7 @@ from typing import Dict
 
 
 class NeuralAgent(PDAgent):
-    def __init__(self, unique_id, model, layer_dims=[6, 3, 1], stochastic=False, mut_prob=MUT_PROB, mut_strength=MUT_STRENGTH):
+    def __init__(self, unique_id, model, layer_dims=DEFAULT_NEURAL_STRUCTURE, stochastic=False, mut_prob=MUT_PROB, mut_strength=MUT_STRENGTH):
         super().__init__(unique_id, model)
         self.prev_actions: Dict[int, np.ndarray] = {}  # Map other's id to its previous action arrays
         self.stochastic = stochastic

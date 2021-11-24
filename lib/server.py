@@ -10,11 +10,9 @@ from lib.model import PDModel
 
 
 def agent_type_map1(x, y):
-    if x == 4 or x == 0:
+    if x == y:
         return 'tit_for_tat'
-    if x == 5 or x == 9:
-        return 'bad'
-    return 'string'
+    return 'neural'
 
 
 def agent_type_map2(x, y):
@@ -28,9 +26,9 @@ def agent_type_map2(x, y):
 
 model_params = {
     "width": 10,
-    "height": 9,
+    "height": 10,
     "seed": MESA_SEED,
-    # "agent_type_map": agent_type_map2,
+    "agent_type_map": agent_type_map1,
     "num_substeps": UserSettableParameter(
         "slider",
         "Number of steps in each generation",
@@ -47,7 +45,7 @@ model_params = {
     "agent_type": UserSettableParameter(
         "choice",
         "Agent type",
-        value="neural",
+        value="mixed",
         choices=['neural', 'string', 'tit_for_tat', 'simple', 'mixed'],
     ),
     "neighbor_type": UserSettableParameter(

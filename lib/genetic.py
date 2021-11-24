@@ -24,6 +24,32 @@ def evolute(population: List[PDAgent]) -> List[PDAgent]:
     return children
 
 
+# def evolute_local_old(population: List[PDAgent]) -> List[PDAgent]:
+#     children = []
+#     random = population[0].random
+#
+#     for agent in population:
+#         if not agent.reproducable():
+#             children.append(agent)
+#         else:
+#             candidates = [agent] + agent.neighbors
+#             candidates = [c for c in candidates if c.reproducable()]
+#             assert len(candidates) >= 2, f'Agent {agent} at {agent.pos} has too few reproducable neighbors'
+#
+#             weights = [a.fitness for a in candidates]
+#             a, b = random.choices(candidates, weights, k=2)
+#             if type(a) != type(b):
+#                 c = agent
+#             else:
+#                 c, _ = a.cross(b)
+#                 c.pos = agent.pos
+#
+#             c.mutate()
+#             children.append(c)
+#
+#     return children
+
+
 def evolute_local(population: List[PDAgent]) -> List[PDAgent]:
     """
     A modified version of genetic algorithm that is specially designed for spatial society.
@@ -37,21 +63,16 @@ def evolute_local(population: List[PDAgent]) -> List[PDAgent]:
 
     for i in range(len(population) // 2):
         father = random.choices(population, weights, k=1)[0]
-        candidates = [a for a in father.neighbors if a.reproducable()]
+        if not father.reproducable():
+            continue
+        candidates = [a for a in father.neighbors if a.reproducable() and type(a) == type(father)]
         if len(candidates) == 0:
             continue  # does nothing in this iteration
         mother = max(candidates, key=lambda a: a.fitness)  # find fittest reproducable neighbor
-        if father.reproducable() and mother.reproducable() and type(father) == type(mother):
-            children = father.cross(mother)
-        else:
-            continue
+        children = father.cross(mother)
 
         # Place back and replace the weakest
         for child in children:
-            # candidates = [a for a in father.neighbors if a.reproducable()]
-            # if len(candidates) == 0:
-            #     continue
-            # weakest = min(candidates, key=lambda a: a.fitness)
             if len(father.neighbors) == 0:
                 continue
             weakest = min(father.neighbors, key=lambda a: a.fitness)
