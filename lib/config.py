@@ -14,8 +14,8 @@ NUM_SUBSTEPS = 10  # substeps in a generation
 USE_LOCAL_GA = True  # weather to use the localized version of GA
 FITNESS_MULTIPLIER = 2  # parameter used for scaling fitness function, see P15 of the java manual
 EPS = 1e-3
-MUT_PROB = 0.7
-MUT_STRENGTH = 10.
+MUT_PROB = 0.2
+MUT_STRENGTH = 1.0
 
 DEFAULT_NEURAL_STRUCTURE = [6, 1]
 MEM_LEN = 3

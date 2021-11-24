@@ -137,8 +137,11 @@ class PDModel(Model):
     def update_stats(self):
         self.num_cooperating_agents = sum(a.is_cooperating for a in self.agents)
         self.mean_score = sum(a.score for a in self.agents) / len(self.agents)
-        self.max_score = max(a.score for a in self.agents)
-        self.min_score = min(a.score for a in self.agents)
+
+        scores = sorted(a.score for a in self.agents)
+        k = int(0.1 * len(self.agents))
+        self.max_score = sum(scores[-k:]) / k
+        self.min_score = sum(scores[:k]) / k
         self.num_simples = sum(1 for a in self.agents if isinstance(a, SimpleAgent))
         self.num_tit_for_tats = sum(1 for a in self.agents if isinstance(a, TitForTatAgent))
         self.num_neurals = sum(1 for a in self.agents if isinstance(a, NeuralAgent))
