@@ -15,14 +15,14 @@ class NeuralAgent(PDAgent):
         self.other_prev_actions = {}  # Map other's id to its previous action
         self.stochastic = stochastic
 
-        self.final_activation = scipy.special.expit
+        self.final_activation = lambda x: 1/(1+np.exp(x))
         self.relu = lambda x: x * (x > 0)
         # self.final_activation = lambda x: np.clip(x, 0, 1)
 
         # structure of the nn
         self.input = 1
-        self.hidden1 = 3
-        self.hidden2 = 3
+        self.hidden1 = 1
+        self.hidden2 = 1
         self.output = 1
 
         # Probability of mutation
