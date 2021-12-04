@@ -4,8 +4,7 @@ from os import makedirs
 from plot import *
 
 details = False
-folder = f"out/{datetime.now().strftime('%d_%m_%Y_%H:%M')}"
-# folder = "out/16_11_2021_14:44_details"
+folder = f"out/{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}"
 print(f"Results will be saved to {folder}")
 makedirs(folder)
 makedirs(f"{folder}/maps")

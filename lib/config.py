@@ -17,7 +17,7 @@ EPS = 1e-3
 MUT_PROB = 0.2
 MUT_STRENGTH = 1.0
 
-DEFAULT_NEURAL_STRUCTURE = [6, 1]  # for neural agents
+DEFAULT_NEURAL_STRUCTURE = [8, 1]  # for neural agents
 MEM_LEN = 2  # for string agents
 
 DEFAULT_WIDTH = 10
