@@ -17,15 +17,15 @@ EPS = 1e-3
 MUT_PROB = 0.2
 MUT_STRENGTH = 1.0
 
-DEFAULT_NEURAL_STRUCTURE = [6, 1]
-MEM_LEN = 3
+DEFAULT_NEURAL_STRUCTURE = [6, 1]  # for neural agents
+MEM_LEN = 2  # for string agents
 
-DEFAULT_WIDTH = 20
-DEFAULT_HEIGHT = 20
+DEFAULT_WIDTH = 10
+DEFAULT_HEIGHT = 10
 TORUS_GRID = True
 CANVAS_DX = 30
 
-MESA_SEED = 3
+MESA_SEED = 4
 NUMPY_SEED = 3
 
 VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'

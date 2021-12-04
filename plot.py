@@ -1,3 +1,4 @@
+import numpy as np
 from matplotlib import pyplot as plt
 
 from lib.model import *
@@ -28,7 +29,7 @@ def plot_feature_map(m, i, folder):
             f = agent.feature_vector()
             f0[y, x] = f[0]
             f1[y, x] = f[1]
-            print(f)
+            # print(f)
     plt.clf()
     plt.figure(figsize=(10, 5))
     fig, (ax0, ax1) = plt.subplots(1, 2, gridspec_kw={'width_ratios': [4, 5]})
@@ -58,6 +59,7 @@ def plot_scores(data, folder, start=0, end=None):
     if end is None:
         end = len(data)
     plt.clf()
+    plt.figure(figsize=(10, 8))
     x = np.arange(start, end)
     plt.plot(x, data['Mean_Score'][start:end], label='Mean')
     plt.plot(x, data['Max_Score'][start:end], label='Max')
@@ -72,13 +74,17 @@ def plot_feat_vecs(data, folder, start=0, end=None):
     if end is None:
         end = len(data)
     plt.clf()
-    vecs = data['Mean_Feature_Vector'][start:end]
+    plt.figure(figsize=(10, 8))
+    fv = data['Mean_Feature_Vector'][start:end]  # [rounds, 2^m]
+    fv = np.array([f for f in fv])
     x = np.arange(start, end)
-    vec_0 = [v[0] for v in vecs]
-    vec_1 = [v[1] for v in vecs]
-    plt.plot(x, vec_0, label='0')
-    plt.plot(x, vec_1, label='1')
+    m = int(np.log2(fv.shape[1]))
+    for i in range(fv.shape[1]):
+        bin_repr = f'{i:0b}'.zfill(m)[::-1]  # 01 sequence from oldest to latest history
+        # plt.plot(x, fv[:, i], '-o' if bin_repr[-1] == '0' else '-^', label=bin_repr)
+        plt.plot(x, fv[:, i], '-', label=bin_repr)
+    plt.plot(x, 0.5 * np.ones_like(x), 'k--')
     plt.xlabel('Generation')
-    plt.ylabel('Feature')
+    plt.ylabel('Mean Feature Vector')
     plt.legend()
     plt.savefig(f'{folder}/feat_vec.png')

@@ -93,14 +93,21 @@ class NeuralAgent(PDAgent):
 
     def feature_vector(self):
         """
-        Given 0 or 1 as input, return the two outputs of the network
+        Given all possible inputs, return the two outputs of the network
         """
-        f0 = np.asscalar(self.forward(np.array([0] * (self.mem_len * 2))))
-        if self.mem_len > 2:
-            f1 = np.asscalar(self.forward(np.array([0] * (self.mem_len * 2 - 4) + [1] * 4)))
-        else:
-            f1 = np.asscalar(self.forward(np.array([0] * (self.mem_len * 2 - 2) + [1] * 2)))
-        return np.array([f0, f1])
+        m = self.mem_len
+        fv = np.zeros((2 ** m, 2 ** m))  # our history x other history -> fv
+        for case in range(2 ** (2 * m)):
+            # case = other_history | our_history
+            inputs = np.zeros(2 * m)
+            for i in range(m):
+                inputs[2 * i] = (case & (1 << i)) >> i
+                inputs[2 * i + 1] = (case & (1 << (i + m))) >> (i + m)
+            fv[case & ((1 << m) - 1), case >> m] = self.forward(inputs)
+
+        fv = fv.mean(0)
+        return fv  # [2 ** m,] lower bit: older history, higher bit: newer history
+        # e.g. fv[001] means: suppose the memory of opponent is D C C (from oldest to latest)
 
     def data(self):
         """

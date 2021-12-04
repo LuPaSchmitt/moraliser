@@ -146,8 +146,8 @@ class PDModel(Model):
         self.num_tit_for_tats = sum(1 for a in self.agents if isinstance(a, TitForTatAgent))
         self.num_neurals = sum(1 for a in self.agents if isinstance(a, NeuralAgent))
 
-        fs = [a.feature_vector().squeeze() for a in self.agents if isinstance(a, NeuralAgent)]
-        self.mean_feature_vector = np.mean(fs, axis=0)
+        fs = np.array([a.feature_vector() for a in self.agents if isinstance(a, NeuralAgent)])
+        self.mean_feature_vector = fs.mean(0)
 
         self.f_max = max(a.fitness for a in self.agents)
         self.f_avg = sum(a.fitness for a in self.agents) / len(self.agents)

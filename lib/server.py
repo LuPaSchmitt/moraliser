@@ -28,7 +28,7 @@ model_params = {
     "width": 10,
     "height": 10,
     "seed": MESA_SEED,
-    "agent_type_map": agent_type_map1,
+    # "agent_type_map": agent_type_map1,
     "num_substeps": UserSettableParameter(
         "slider",
         "Number of steps in each generation",
