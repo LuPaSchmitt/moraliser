@@ -12,7 +12,7 @@ pip3 install -r ./requirements.txt
 
 ## How to run the demo
 
-We made a Web application to give you a quick impression of our project. In the `moraliser` directory, run:
+We made a Web application to give you a quick impression of our project. **In the `moraliser` directory**, run:
 
 ```commandline
 python3 -m app.server

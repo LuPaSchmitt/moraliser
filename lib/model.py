@@ -77,6 +77,7 @@ class PDModel(Model):
         self.num_simples = 0
         self.num_tit_for_tats = 0
         self.num_neurals = 0
+        self.num_strings = 0
         self.mean_feature_vector = None
         self.f_max = 0
         self.f_avg = 0
@@ -91,6 +92,7 @@ class PDModel(Model):
                 'Simple_Agents': 'num_simples',
                 'Tit_for_tat_Agents': 'num_tit_for_tats',
                 'Neural_Agents': 'num_neurals',
+                'String_Agents': 'num_strings',
                 'Mean_Feature_Vector': 'mean_feature_vector',
             },
             agent_reporters={
@@ -133,9 +135,20 @@ class PDModel(Model):
         k = int(0.1 * len(self.agents))
         self.max_score = sum(scores[-k:]) / k
         self.min_score = sum(scores[:k]) / k
-        self.num_simples = sum(1 for a in self.agents if isinstance(a, SimpleAgent))
-        self.num_tit_for_tats = sum(1 for a in self.agents if isinstance(a, TitForTatAgent))
-        self.num_neurals = sum(1 for a in self.agents if isinstance(a, NeuralAgent))
+
+        self.num_simples = 0
+        self.num_tit_for_tats = 0
+        self.num_neurals = 0
+        self.num_strings = 0
+        for a in self.agents:
+            if isinstance(a, SimpleAgent):
+                self.num_simples += 1
+            elif isinstance(a, TitForTatAgent):
+                self.num_tit_for_tats += 1
+            elif isinstance(a, NeuralAgent):
+                self.num_neurals += 1
+            elif isinstance(a, StringAgent):
+                self.num_strings += 1
 
         fs = np.array([a.feature_vector() for a in self.agents if isinstance(a, NeuralAgent)])
         self.mean_feature_vector = fs.mean(0) if len(fs) > 0 else None
