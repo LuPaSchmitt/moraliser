@@ -5,30 +5,44 @@ PAYOFF_MAP = [
     [5, 1],
 ]
 
-NEIGHBOR_TYPE = 4  # 8, 4, or 2
-NEIGHBOR_RADIUS = 1
+# Neighbors of each agent: can be 8 (everyone around), 4 (left right top bottom), or 2 (left right)
+NEIGHBOR_TYPE = 4
+NEIGHBOR_RADIUS = 1  # interaction radius
 
-NUM_SUBSTEPS = 10  # substeps in a generation
+NUM_SUBSTEPS = 10  # rounds in a generation
 
-# GA parameters
+# Genetic Algorithm parameters
 USE_LOCAL_GA = True  # weather to use the localized version of GA
 FITNESS_MULTIPLIER = 2  # parameter used for scaling fitness function, see P15 of the java manual
-EPS = 1e-3
-MUT_PROB = 0.2
-MUT_STRENGTH = 1.0
+EPS = 1e-3  # for fitness scaling
+MUT_PROB = 0.2  # mutation probability for NeuralAgent and StringAgent
+MUT_STRENGTH = 1.0  # how strong to perturb the weights of NeuralAgent
+TFT_REPRODUCABLE = False  # does TFT participate in the reproduction
+NEURAL_REPRODUCABLE = True  # does NeuralAgent participate in the reproduction
+STRING_REPRODUCABLE = True  # does StringAgent participate in the reproduction
 
-DEFAULT_NEURAL_STRUCTURE = [8, 1]  # for neural agents
-MEM_LEN = 2  # for string agents
+# Network topology for NeuralAgent
+# e.g. [6, 1] means a network with 6 inputs (i.e. memory size 3), fully connected to the output
+DEFAULT_NEURAL_STRUCTURE = [6, 1]
 
+# StringAgent's memory size
+MEM_LEN = 2
+
+# Settings for PDModel
 DEFAULT_WIDTH = 10
 DEFAULT_HEIGHT = 10
 TORUS_GRID = True
 CANVAS_DX = 30
 
+# Random seeds
 MESA_SEED = 4
 NUMPY_SEED = 3
 
-VISUALIZE_GRID_TYPE = 'agent_type'  # 'agent_type' or 'defecting_ratio' or 'inherited_attr'
+# The way agents are rendered in the Web demo, must be one of the followings:
+# 'agent_type': the colors indicate which type of agent it is, i.e. NeuralAgent, StringAgent, TitForTatAgent, ...
+# 'defecting_ratio': visualize how defecting agents are, using a heatmap
+# 'inherited_attr': visualize who are the offsprings from whom, a way to understand the genetic algorithm
+VISUALIZE_GRID_TYPE = 'agent_type'
 
 
 def config_to_str():

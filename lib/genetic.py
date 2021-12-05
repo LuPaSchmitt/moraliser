@@ -15,39 +15,13 @@ def evolute(population: List[PDAgent]) -> List[PDAgent]:
         if a.reproducable() and b.reproducable() and type(a) == type(b):
             c1, c2 = a.cross(b)
         else:
-            c1, c2 = a, b
+            c1, c2 = a.clone(), b.clone()
         c1.mutate()
         c2.mutate()
         children += [c1, c2]
 
     children = children[:len(population)]
     return children
-
-
-# def evolute_local_old(population: List[PDAgent]) -> List[PDAgent]:
-#     children = []
-#     random = population[0].random
-#
-#     for agent in population:
-#         if not agent.reproducable():
-#             children.append(agent)
-#         else:
-#             candidates = [agent] + agent.neighbors
-#             candidates = [c for c in candidates if c.reproducable()]
-#             assert len(candidates) >= 2, f'Agent {agent} at {agent.pos} has too few reproducable neighbors'
-#
-#             weights = [a.fitness for a in candidates]
-#             a, b = random.choices(candidates, weights, k=2)
-#             if type(a) != type(b):
-#                 c = agent
-#             else:
-#                 c, _ = a.cross(b)
-#                 c.pos = agent.pos
-#
-#             c.mutate()
-#             children.append(c)
-#
-#     return children
 
 
 def evolute_local(population: List[PDAgent]) -> List[PDAgent]:

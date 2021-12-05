@@ -41,7 +41,7 @@ class StringAgent(PDAgent):
         self.mutate_probability = mut_prob
 
     def reproducable(self) -> bool:
-        return True
+        return STRING_REPRODUCABLE
 
     def clone(self):
         return StringAgent(self.unique_id, self.model, self.mem_len)

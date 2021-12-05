@@ -3,7 +3,7 @@ from os import makedirs
 
 from plot import *
 
-details = False
+details = True
 folder = f"out/{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}"
 print(f"Results will be saved to {folder}")
 makedirs(folder)
@@ -33,15 +33,19 @@ if NUMPY_SEED is not None:
 
 m = PDModel(seed=MESA_SEED, agent_type='neural')
 if not details:
-    m.run(4000)
+    m.run(1600)
     data = m.data_collector.get_model_vars_dataframe()
     plot_scores(data, folder)
     plot_feat_vecs(data, folder)
 else:
+    # Fixing the seed and study the details of this code run
     m.run(1000)
-    m.run(1200 - 1000, make_callback(m, 10, 1000))
-    m.dump(f'{folder}/{1200}_model.pickle')
+    m.run(1200 - 1000, make_callback(m, 10, 1000))  # plot the map every 10 generations
+    plot_defecting_ratio_map(m, 1200, folder)  # plot the defecting ratio map at the 1200th generation
     m.run(1600 - 1200, make_callback(m, 10, 1200))
     data = m.data_collector.get_model_vars_dataframe()
+    # Plot more results over generations
     plot_scores(data, folder, 1000, 1600)
     plot_feat_vecs(data, folder, 1000, 1600)
+
+m.dump(f"{folder}/model.pickle")  # save the model after 1600 generations

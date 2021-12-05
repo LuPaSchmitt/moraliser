@@ -1,0 +1,6 @@
+dill
+matplotlib
+Mesa==0.8.9
+numpy
+scipy
+tqdm

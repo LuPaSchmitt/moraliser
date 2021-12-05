@@ -1,3 +1,4 @@
-*.png
-.idea
 out
+**/__pycache__/
+.DS_STORE
+.idea

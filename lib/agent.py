@@ -7,7 +7,7 @@ from lib.config import *
 
 
 class PDAgent(Agent):
-    """Agent member of the iterated, spatial prisoner's dilemma model."""
+    """Base class of the agent member for Iterated Prisoner's Dilemma model."""
 
     def __init__(self, unique_id, model):
         """
@@ -23,7 +23,6 @@ class PDAgent(Agent):
         self.next_action: Dict[int, int] = {}  # for advancing
         self.fitness = 0
         self.action_history = []  # keep track of all actions this agent made to measure its defecting_ratio
-        # TODO: more efficient implementation of action table, currently the dictionary lookup takes too much time
 
     def initialize(self, neighbor_type, starting_action=None):
         """
@@ -85,6 +84,9 @@ class PDAgent(Agent):
 
     @property
     def defecting_ratio(self):
+        """
+        To what extend is the agent defecting others. Float from 0 to 1
+        """
         if len(self.action_history) == 0:
             return 0
         return sum(self.action_history) / len(self.action_history)

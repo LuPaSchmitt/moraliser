@@ -14,7 +14,7 @@ from lib.strategies import *
 
 
 class PDModel(Model):
-    """Model class for iterated, spatial prisoner's dilemma model."""
+    """Model class for Iterated Prisoner's Dilemma."""
 
     def __init__(self, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT,
                  num_substeps=NUM_SUBSTEPS, seed=None, neighbor_type=NEIGHBOR_TYPE, fitness_type='score', agent_type='neural',
@@ -52,7 +52,9 @@ class PDModel(Model):
                         type_str, params_dict = packed
                 else:
                     if agent_type == 'mixed':
-                        type_str = self.random.choices(['neural', 'tit_for_tat', 'simple'], [0.3, 0.3, 0.3], k=1)[0]
+                        # TODO: you may use other agent type and probability configurations
+                        type_str = self.random.choices(['neural', 'string', 'tit_for_tat', 'simple'], [1, 1, 1, 1], k=1)[0]
+                        # type_str = self.random.choices(['string', 'string_tit_for_tat', 'good'], [2, 3, 2], k=1)[0]
                     else:
                         type_str = agent_type
 
@@ -96,17 +98,6 @@ class PDModel(Model):
             }
         )
 
-        # # Collect for each substep
-        # self.substep_data_collector = DataCollector(
-        #     agent_reporters={
-        #         'Current_Action': 'action',
-        #         'Current_Score': 'cur_score',
-        #         'Score': 'score',
-        #     }
-        # )
-
-        # self.data_collector.collect(self)
-
     def create_agent(self, type_str, params_dict):
         if type_str == 'neural':
             agent = NeuralAgent(self.next_id(), self, stochastic=params_dict.get('stochastic', False))
@@ -147,16 +138,16 @@ class PDModel(Model):
         self.num_neurals = sum(1 for a in self.agents if isinstance(a, NeuralAgent))
 
         fs = np.array([a.feature_vector() for a in self.agents if isinstance(a, NeuralAgent)])
-        self.mean_feature_vector = fs.mean(0)
+        self.mean_feature_vector = fs.mean(0) if len(fs) > 0 else None
 
         self.f_max = max(a.fitness for a in self.agents)
         self.f_avg = sum(a.fitness for a in self.agents) / len(self.agents)
 
     def substep(self):
         """
-        In each substep, every agent plays the PD tournament with its neighbors once
+        In each substep, every agent plays one round of IPD with its neighbors
         """
-        if self.schedule.steps >= 1:  # scheduler.steps mean the substeps
+        if self.schedule.steps >= 1:
             # Play the tournament and advance the actions
             self.schedule.step()
         else:
@@ -167,8 +158,6 @@ class PDModel(Model):
         for agent in self.agents:
             agent.update_scores()
             agent.feedback()
-
-        # self.substep_data_collector.collect(self)
 
     def recompute_scaled_fitness(self) -> Callable:
         """
@@ -218,7 +207,7 @@ class PDModel(Model):
 
     def next_generation_local(self):
         """
-        Apply genetic algorithm to select dominant agents
+        Apply local genetic algorithm to select dominant agents
         """
         children = evolute_local(self.agents)
 
